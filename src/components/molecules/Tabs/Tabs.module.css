@@ -1,0 +1,27 @@
+/* src/components/molecules/Tabs/Tabs.module.css */
+.tabsContainer {
+  display: flex;
+  border-bottom: 2px solid #444;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 1rem;
+  font-weight: bold;
+  border-bottom: 3px solid transparent; /* Borde inferior transparente por defecto */
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+}
+
+.tab:hover {
+  color: #fff;
+}
+
+.tab.active {
+  color: #fff;
+  border-bottom-color: #FFA500; /* Naranja para la pestaña activa, como la barra */
+}

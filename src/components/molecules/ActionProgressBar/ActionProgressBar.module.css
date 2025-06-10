@@ -1,0 +1,45 @@
+/* src/components/molecules/ActionProgressBar/ActionProgressBar.module.css */
+.actionProgressBar {
+  width: 300px; /* O el ancho que prefieras */
+  height: 50px;
+  background-color: #555;
+  border: 2px solid #333;
+  border-radius: 8px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden; /* Para que el relleno no se salga */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.actionProgressBar:hover:not(:disabled) {
+  background-color: #666;
+}
+
+.actionProgressBar:disabled {
+  background-color: #404040;
+  cursor: not-allowed;
+}
+
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #4CAF50; /* Verde para el progreso */
+  transition: width 0.1s linear; /* Transición suave para el progreso */
+}
+
+.actionProgressBar.active .progressFill {
+  background-color: #4CAF50; /* Naranja cuando está activo */
+}
+
+.label {
+  position: relative; /* Para que esté por encima del relleno */
+  z-index: 1;
+}
