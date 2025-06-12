@@ -1,7 +1,7 @@
 // src/App.tsx
 import { useState } from 'react'; // 1. Importa useState
 import ExplorationDashboard from './features/exploration/ExplorationDashboard';
-import EnvironmentDashboard from './features/environment/EnvironmentDashboard'; // 2. Importa el nuevo dashboard
+import EnvironmentDashboard from './features/environment/EnvironmentDashboard/EnvironmentDashboard.js'; // 2. Importa el nuevo dashboard
 import Tabs, { type TabItem } from './components/molecules/Tabs/Tabs.jsx'; // 3. Importa el componente Tabs
 import './App.css';
 

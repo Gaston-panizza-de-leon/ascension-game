@@ -1,0 +1,96 @@
+.card {
+  border: 2px solid #444;
+  border-radius: 12px;
+  width: 250px;
+  background-color: #2e2e2e;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+.card.active {
+  border-color: #FFA500;
+}
+
+.imageContainer {
+  background-color: #3a3a3a;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image {
+  width: 100px;
+  height: 100px;
+}
+
+/* --- ESTILOS PARA LA BARRA CIRCULAR --- */
+.circularProgress {
+  border-radius: 50%;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  transition: background 0.1s linear;
+}
+
+.circularProgress .image {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background-color: #2e2e2e;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.info {
+  padding: 15px;
+  text-align: center;
+}
+
+.info h3 {
+  margin-top: 0;
+}
+
+.durability {
+  font-size: 0.9em;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.durability progress {
+  width: 100px;
+}
+
+.task {
+  font-weight: bold;
+  color: #FFA500;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.actions button {
+  background-color: #555;
+  color: white;
+  border: 1px solid #666;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.actions button:hover {
+  background-color: #666;
+}
