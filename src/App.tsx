@@ -3,6 +3,7 @@ import { useState } from 'react'; // 1. Importa useState
 import ExplorationDashboard from './features/exploration/ExplorationDashboard';
 import EnvironmentDashboard from './features/environment/EnvironmentDashboard/EnvironmentDashboard.js'; // 2. Importa el nuevo dashboard
 import Tabs, { type TabItem } from './components/molecules/Tabs/Tabs.jsx'; // 3. Importa el componente Tabs
+import { ResourceDisplay } from './features/environment/components/game/ResourceDisplay/ResourceDisplay.jsx'; // 4. Importa el componente de recursos
 import './App.css';
 
 // Definimos los tabs que usará nuestra aplicación
@@ -32,7 +33,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Ascension Game</h1>
-        {/* Aquí podría ir el panel de recursos en el futuro */}
+        <ResourceDisplay />
       </header>
 
       <main>

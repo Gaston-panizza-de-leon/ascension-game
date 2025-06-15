@@ -1,6 +1,6 @@
 import type { Tree, TaskType } from '../../../../store/slices/environmentSlice';
 import styles from './TreeCard.module.css';
-import treeImage from '../../../../assets/arbol.jpg'; // La ruta es relativa
+import treeImage from '../../../../assets/tree.png'; // La ruta es relativa
 
 // Imagen de placeholder para el árbol
 
@@ -36,14 +36,16 @@ export const TreeCard = ({ tree, onAssignTask }: TreeCardProps) => {
           <p className={styles.task}>
             Tarea: Recolectar {resourceIcon}
           </p>
-          <div className={styles.durability}>
-            <span>Durabilidad</span>
-            <progress
-              max={tree.maxDurability}
-              value={tree.durability}
-            ></progress>
-            <span>{`${tree.durability}/${tree.maxDurability}`}</span>
-          </div>
+          {tree.assignedTask === 'wood' && (
+            <div className={styles.durability}>
+              <span>Durabilidad</span>
+              <progress
+                max={tree.maxDurability}
+                value={tree.durability}
+              ></progress>
+              <span>{`${tree.durability}/${tree.maxDurability}`}</span>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -58,9 +60,6 @@ export const TreeCard = ({ tree, onAssignTask }: TreeCardProps) => {
       <div className={styles.info}>
         <h3>Árbol #{tree.id}</h3>
         <p>A la espera de una tarea...</p>
-        <div className={styles.durability}>
-          <span>Durabilidad: {`${tree.durability}/${tree.maxDurability}`}</span>
-        </div>
         <div className={styles.actions}>
           <button onClick={() => handleAssignTask('food')}>Recolectar 🍎</button>
           <button onClick={() => handleAssignTask('wood')}>Talar 🪓</button>

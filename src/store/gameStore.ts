@@ -1,20 +1,33 @@
-import { create } from 'zustand';
-import { type ExplorationSlice, createExplorationSlice, calculateXpForLevel } from './slices/explorationSlice';
-import { type ResourceSlice, createResourceSlice } from './slices/resourceSlice';
-import { type EnvironmentSlice, createEnvironmentSlice } from './slices/environmentSlice';
+import { create } from "zustand";
+import {
+  type ExplorationSlice,
+  createExplorationSlice,
+  calculateXpForLevel,
+} from "./slices/explorationSlice";
+import {
+  type ResourceSlice,
+  createResourceSlice,
+} from "./slices/resourceSlice";
+import {
+  type EnvironmentSlice,
+  createEnvironmentSlice,
+} from "./slices/environmentSlice";
 
 // --- CONSTANTES GLOBALES DE JUEGO ---
-const XP_GAIN_PER_SECOND = 1;
-const TREE_CYCLE_SECONDS = 3;
+const XP_GAIN_PER_SECOND = 10;
+const WOOD_CYCLE_SECONDS = 5; // Talar es más rápido
+const FOOD_CYCLE_SECONDS = 10; // Recolectar comida es más lento
 
 // --- TIPO GLOBAL DEL STORE ---
 // 1. AÑADIMOS ESTADO PARA MANEJAR EL NUEVO BUCLE DE JUEGO
-export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & {
-  lastTickTimestamp: number;
-  isLoopRunning: boolean;
-  setLoopRunning: (isRunning: boolean) => void;
-  setLastTickTimestamp: (ts: number) => void;
-};
+export type GameState = ExplorationSlice &
+  ResourceSlice &
+  EnvironmentSlice & {
+    lastTickTimestamp: number;
+    isLoopRunning: boolean;
+    setLoopRunning: (isRunning: boolean) => void;
+    setLastTickTimestamp: (ts: number) => void;
+  };
 
 // --- CREACIÓN DEL STORE ENSAMBLANDO SLICES ---
 export const useGameStore = create<GameState>()((...a) => ({
@@ -28,7 +41,6 @@ export const useGameStore = create<GameState>()((...a) => ({
   setLoopRunning: (isRunning) => a[0]({ isLoopRunning: isRunning }),
   setLastTickTimestamp: (ts) => a[0]({ lastTickTimestamp: ts }),
 }));
-
 
 // ====================================================================
 // 3. NUEVO MOTOR DEL JUEGO BASADO EN requestAnimationFrame
@@ -54,9 +66,11 @@ const gameLoop = (timestamp: number) => {
   }
 
   // --- Lógica de Ciclos de Entorno ---
-  state.trees.forEach(tree => {
+  state.trees.forEach((tree) => {
     if (tree.assignedTask && tree.durability > 0) {
-      const progressPerSecond = 100 / TREE_CYCLE_SECONDS;
+      const cycleDuration =
+        tree.assignedTask === "wood" ? WOOD_CYCLE_SECONDS : FOOD_CYCLE_SECONDS;
+      const progressPerSecond = 100 / cycleDuration;
       const progressGained = (deltaTime / 1000) * progressPerSecond;
       const newProgress = tree.progress + progressGained;
 
@@ -67,6 +81,21 @@ const gameLoop = (timestamp: number) => {
       }
     }
   });
+  const totalXpForLevel = calculateXpForLevel(state.explorationLevel);
+  if (state.currentXp >= totalXpForLevel) {
+    const excessXp = state.currentXp - totalXpForLevel;
+    const newLevel = state.explorationLevel + 1;
+
+    getState().levelUp();
+    getState().resetXp();
+    getState().addXp(excessXp);
+    console.log(`¡NIVEL DE EXPLORACIÓN COMPLETADO! Nuevo nivel: ${newLevel}`);
+
+    if (newLevel % 4 === 0) {
+      console.log("¡Has descubierto un nuevo árbol en tus exploraciones!");
+      getState().discoverNewTree();
+    }
+  }
 
   // Solicitamos al navegador que vuelva a ejecutar gameLoop en el siguiente fotograma
   requestAnimationFrame(gameLoop);
@@ -79,29 +108,14 @@ const gameLoop = (timestamp: number) => {
 // ====================================================================
 useGameStore.subscribe((state) => {
   const { getState } = useGameStore;
+  const shouldLoopRun =
+    state.isExploring || state.trees.some((t) => t.assignedTask);
 
-  // Decide si el bucle principal debería estar activo
-  const shouldLoopRun = state.isExploring || state.trees.some(t => t.assignedTask);
-
-  // Si el bucle debe correr y no está corriendo, lo iniciamos.
   if (shouldLoopRun && !state.isLoopRunning) {
     getState().setLoopRunning(true);
-    // Usamos performance.now() para obtener un timestamp de alta precisión
     getState().setLastTickTimestamp(performance.now());
     requestAnimationFrame(gameLoop);
-  } 
-  // Si el bucle no debe correr y SÍ está corriendo, le ponemos la bandera para que se detenga.
-  else if (!shouldLoopRun && state.isLoopRunning) {
+  } else if (!shouldLoopRun && state.isLoopRunning) {
     getState().setLoopRunning(false);
-  }
-
-  // La lógica de subida de nivel no cambia, se sigue ejecutando aquí
-  const totalXpForLevel = calculateXpForLevel(state.explorationLevel);
-  if (state.currentXp >= totalXpForLevel) {
-    const excessXp = state.currentXp - totalXpForLevel;
-    getState().levelUp();
-    getState().resetXp();
-    getState().addXp(excessXp);
-    console.log(`¡NIVEL DE EXPLORACIÓN COMPLETADO! Nuevo nivel: ${getState().explorationLevel}`);
   }
 });

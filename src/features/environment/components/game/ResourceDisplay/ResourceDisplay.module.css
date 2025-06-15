@@ -1,0 +1,45 @@
+/* El contenedor principal ahora es un panel posicionado */
+.resourcePanel {
+  position: fixed; /* Fijo en la pantalla */
+  top: 15px;
+  right: 15px;
+  width: 200px;
+  background-color: rgba(15, 15, 15, 0.85);
+  border-radius: 8px;
+  border: 1px solid #444;
+  padding: 10px;
+  backdrop-filter: blur(5px); /* Efecto "cristal esmerilado" muy moderno */
+  z-index: 1000; /* Para que esté por encima de otros elementos */
+  display: flex;
+  flex-direction: column; /* Apilamos los recursos verticalmente */
+  gap: 8px;
+}
+
+/* Cada fila de recurso */
+.resourceItem {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+.icon {
+  font-size: 1.5rem;
+  margin-right: 12px;
+  line-height: 1;
+}
+
+.name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e0e0e0;
+  flex-grow: 1; /* Hace que el nombre ocupe el espacio sobrante */
+}
+
+.value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums; /* Evita que los números "bailen" al cambiar */
+}

@@ -1,6 +1,7 @@
 // src/store/slices/explorationSlice.ts
 
 import type { StateCreator } from 'zustand';
+import type { GameState } from '../gameStore';
 
 // --- LÓGICA Y CONSTANTES DE ESTE SLICE ---
 const BASE_XP_REQUIRED = 5;
@@ -28,13 +29,38 @@ export interface ExplorationSlice {
 // --- CREACIÓN DEL SLICE ---
 // Es una función que recibe `set` y `get` (de Zustand) y devuelve el objeto del slice.
 // Usamos `StateCreator` para el tipado, que nos ayuda a componer slices.
-export const createExplorationSlice: StateCreator<ExplorationSlice> = (set) => ({
+export const createExplorationSlice: StateCreator<
+  GameState,
+  [],
+  [],
+  ExplorationSlice
+> = (set, get) => ({
   explorationLevel: 1,
   currentXp: 0,
   isExploring: false,
   intervalId: null,
 
-  setExploring: (exploring) => set({ isExploring: exploring }),
+    setExploring: (exploring) => {
+    // ====================================================================
+    // CAMBIO CLAVE: Lógica de exclusividad de tarea
+    // ====================================================================
+    // Si vamos a EMPEZAR a explorar...
+    if (exploring) {
+      // ...reseteamos todas las tareas de los árboles.
+      const resetTrees = get().trees.map(tree => ({
+        ...tree,
+        assignedTask: null,
+        progress: 0
+      }));
+
+      // Actualizamos el estado de exploración Y el de los árboles a la vez
+      set({ isExploring: true, trees: resetTrees });
+    } else {
+      // Si solo estamos parando de explorar, no hacemos nada más.
+      set({ isExploring: false });
+    }
+  },
+  
   addXp: (amount) => set((state) => ({ currentXp: state.currentXp + amount })),
   resetXp: () => set({ currentXp: 0 }),
   levelUp: () => set((state) => ({ 
