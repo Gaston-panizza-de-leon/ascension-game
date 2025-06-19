@@ -1,8 +1,8 @@
-import type { StateCreator } from 'zustand';
-import type { GameState } from '../gameStore';
+import type { StateCreator } from "zustand";
+import type { GameState } from "../gameStore";
 
 // --- INTERFACES Y TIPOS PARA ESTE SLICE ---
-export type TaskType = 'wood' | 'food';
+export type TaskType = "wood" | "food";
 
 export interface Tree {
   id: number;
@@ -14,6 +14,7 @@ export interface Tree {
 
 export interface EnvironmentSlice {
   trees: Tree[];
+  activeTreeId: number | null; // <-- NUEVO ESTADO
   discoverNewTree: () => void;
   assignTaskToTree: (treeId: number, task: TaskType) => void;
   updateTreeProgress: (treeId: number, progress: number) => void;
@@ -29,6 +30,7 @@ export const createEnvironmentSlice: StateCreator<
   EnvironmentSlice
 > = (set, get) => ({
   trees: [],
+  activeTreeId: null,
 
   discoverNewTree: () => {
     set((state) => {
@@ -48,22 +50,17 @@ export const createEnvironmentSlice: StateCreator<
     // CAMBIO CLAVE: Lógica de exclusividad de tarea
     // ====================================================================
 
-    // 1. Detenemos la exploración
+    // 1. Detenemos la exploración y ponemos el foco en este árbol
     get().setExploring(false);
+    set({ activeTreeId: treeId });
 
-    // 2. Reseteamos el progreso de TODOS los árboles, y asignamos la
-    //    nueva tarea al árbol seleccionado.
-    const newTrees = get().trees.map((tree) => {
-      // Si es el árbol al que le asignamos la tarea...
-      if (tree.id === treeId) {
-        return { ...tree, assignedTask: task, progress: 0 };
-      }
-      // Para todos los demás árboles, cancelamos su tarea.
-      return { ...tree, assignedTask: null, progress: 0 };
-    });
-
-    // 3. Actualizamos el estado de los árboles
-    set({ trees: newTrees });
+    // 2. Actualizamos la tarea del árbol seleccionado Y reseteamos su progreso.
+    //    YA NO TOCAMOS los otros árboles, para que mantengan su estado pausado.
+    set((state) => ({
+      trees: state.trees.map((tree) =>
+        tree.id === treeId ? { ...tree, assignedTask: task, progress: 0 } : tree
+      ),
+    }));
   },
 
   updateTreeProgress: (treeId, progress) => {
@@ -78,28 +75,38 @@ export const createEnvironmentSlice: StateCreator<
     const tree = get().getTreeById(treeId);
     if (!tree || !tree.assignedTask) return;
 
-    if (tree.assignedTask === 'wood') {
+    if (tree.assignedTask === "wood") {
       get().addWood(1);
-      console.log('Madera recolectada!');
-    } else if (tree.assignedTask === 'food') {
+    } else if (tree.assignedTask === "food") {
       get().addFood(1);
-      console.log('Comida recolectada!');
     }
+    const isWoodTask = tree.assignedTask === 'wood';
+    const willBeDestroyed = isWoodTask && tree.durability === 1;
+    
 
-    // ====================================================================
-    // CAMBIO CLAVE: La durabilidad solo baja si la tarea es 'wood'
-    // El progreso se resetea en ambos casos.
-    // ====================================================================
-    set((state) => ({
-      trees: state.trees.map((t) => {
-        if (t.id === treeId) {
-          const newDurability =
-            t.assignedTask === 'wood' ? t.durability - 1 : t.durability;
-          return { ...t, durability: newDurability, progress: 0 };
-        }
-        return t;
-      }),
-    }));
+    if (willBeDestroyed) {
+      console.log(`El árbol #${treeId} ha sido talado por completo y ha desaparecido.`);
+      
+      // Si el árbol va a ser destruido:
+      set((state) => ({
+        // 1. Lo eliminamos de la lista filtrando por su ID.
+        trees: state.trees.filter((t) => t.id !== treeId),
+        
+        // 2. Si era el árbol activo, dejamos de tener un árbol activo.
+        activeTreeId: state.activeTreeId === treeId ? null : state.activeTreeId,
+      }));
+    } else {
+      // Si el árbol sobrevive, actualizamos su estado como de costumbre.
+      set((state) => ({
+        trees: state.trees.map((t) => {
+          if (t.id === treeId) {
+            const newDurability = isWoodTask ? t.durability - 1 : t.durability;
+            return { ...t, durability: newDurability, progress: 0 };
+          }
+          return t;
+        }),
+      }));
+    }
   },
 
   getTreeById: (treeId) => {

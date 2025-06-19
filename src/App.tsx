@@ -1,9 +1,9 @@
 // src/App.tsx
 import { useState } from 'react'; // 1. Importa useState
 import ExplorationDashboard from './features/exploration/ExplorationDashboard';
-import EnvironmentDashboard from './features/environment/EnvironmentDashboard/EnvironmentDashboard.js'; // 2. Importa el nuevo dashboard
-import Tabs, { type TabItem } from './components/molecules/Tabs/Tabs.jsx'; // 3. Importa el componente Tabs
-import { ResourceDisplay } from './features/environment/components/game/ResourceDisplay/ResourceDisplay.jsx'; // 4. Importa el componente de recursos
+import EnvironmentDashboard from './features/environment/EnvironmentDashboard.tsx'; // 2. Importa el nuevo dashboard
+import Tabs, { type TabItem } from './components/molecules/Tabs/Tabs.tsx'; // 3. Importa el componente Tabs
+import { ResourceDisplay } from './components/game/ResourceDisplay/ResourceDisplay.tsx'; // 4. Importa el componente de recursos
 import './App.css';
 
 // Definimos los tabs que usará nuestra aplicación

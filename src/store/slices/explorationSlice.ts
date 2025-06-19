@@ -40,23 +40,15 @@ export const createExplorationSlice: StateCreator<
   isExploring: false,
   intervalId: null,
 
-    setExploring: (exploring) => {
+ setExploring: (exploring) => {
     // ====================================================================
-    // CAMBIO CLAVE: Lógica de exclusividad de tarea
+    // CAMBIO CLAVE: La exploración ahora solo quita el foco, no borra tareas.
     // ====================================================================
-    // Si vamos a EMPEZAR a explorar...
     if (exploring) {
-      // ...reseteamos todas las tareas de los árboles.
-      const resetTrees = get().trees.map(tree => ({
-        ...tree,
-        assignedTask: null,
-        progress: 0
-      }));
-
-      // Actualizamos el estado de exploración Y el de los árboles a la vez
-      set({ isExploring: true, trees: resetTrees });
+      // Al empezar a explorar, quitamos el foco de cualquier árbol.
+      set({ isExploring: true, activeTreeId: null });
     } else {
-      // Si solo estamos parando de explorar, no hacemos nada más.
+      // Al parar de explorar, simplemente lo indicamos.
       set({ isExploring: false });
     }
   },

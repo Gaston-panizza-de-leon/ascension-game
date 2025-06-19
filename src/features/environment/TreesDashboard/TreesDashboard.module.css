@@ -1,0 +1,73 @@
+/* Contenedor principal que usa Flexbox para las columnas */
+.layoutContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Estilo para cada columna */
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.column h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+/* La nueva cuadrícula para las tarjetas de árboles */
+.treesGrid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem; 
+  padding: 1rem;
+  border-radius: 8px;
+  min-height: 300px; /* Para que el panel tenga una altura mínima aunque esté vacío */
+}
+
+/* Separador vertical estético */
+.separator {
+  width: 2px;
+  background-color: #444;
+  border-radius: 1px;
+}
+
+/* Mensaje para cuando una columna está vacía */
+.emptyMessage {
+  color: #888;
+  font-style: italic;
+  grid-column: 1 / -1; 
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.unassignedSection {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border: 2px solid #555;
+  border-radius: 8px;
+  background-color: rgba(40, 40, 40, 0.3);
+}
+
+.unassignedSection h4 {
+  text-align: center;
+  color: #FFA500;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #555;
+  padding-bottom: 0.5rem;
+}
+
+.unassignedContainer {
+  display: flex;
+  flex-wrap: wrap; /* Permitimos que envuelva si hay muchos árboles */
+  justify-content: center;
+  gap: 1.5rem;
+}

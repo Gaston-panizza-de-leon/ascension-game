@@ -12,6 +12,20 @@
 
 .card.active {
   border-color: #FFA500;
+  box-shadow: 0 0 15px rgba(255, 165, 0, 0.5);
+}
+
+.card.paused {
+  border-color: #555;
+  opacity: 0.8;
+  cursor: pointer; 
+}
+
+/* AÑADIDO: Efecto hover para la tarjeta pausada */
+.card.paused:hover {
+  opacity: 1;
+  border-color: #999;
+  transform: translateY(-2px);
 }
 
 .imageContainer {
@@ -51,6 +65,7 @@
 .info {
   padding: 15px;
   text-align: center;
+  flex-grow: 1; /* Para que ocupe espacio y empuje las acciones abajo */
 }
 
 .info h3 {
@@ -68,6 +83,10 @@
 
 .durability progress {
   width: 100px;
+}
+
+.placeholder {
+  visibility: hidden;
 }
 
 .task {
@@ -93,4 +112,32 @@
 
 .actions button:hover {
   background-color: #666;
+}
+
+.switchActions {
+  padding: 0 15px 15px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.switchActions button {
+  width: 100%;
+  background-color: #4a4a4a;
+  color: white;
+  border: 1px solid #666;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.switchActions button:hover:not(:disabled) {
+  background-color: #5a5a5a;
+}
+
+.switchActions button:disabled {
+  background-color: #333;
+  color: #777;
+  cursor: not-allowed;
 }

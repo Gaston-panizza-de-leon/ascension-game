@@ -1,4 +1,4 @@
-import { useGameStore } from "../../../../../store/gameStore";
+import { useGameStore } from "../../../store/gameStore";
 import styles from "./ResourceDisplay.module.css";
 
 export const ResourceDisplay = () => {

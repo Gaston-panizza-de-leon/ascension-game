@@ -14,8 +14,8 @@ import {
 } from "./slices/environmentSlice";
 
 // --- CONSTANTES GLOBALES DE JUEGO ---
-const XP_GAIN_PER_SECOND = 10;
-const WOOD_CYCLE_SECONDS = 5; // Talar es más rápido
+const XP_GAIN_PER_SECOND = 100;
+const WOOD_CYCLE_SECONDS = 10; // Talar es más rápido
 const FOOD_CYCLE_SECONDS = 10; // Recolectar comida es más lento
 
 // --- TIPO GLOBAL DEL STORE ---
@@ -65,22 +65,27 @@ const gameLoop = (timestamp: number) => {
     state.addXp(xpGained);
   }
 
-  // --- Lógica de Ciclos de Entorno ---
-  state.trees.forEach((tree) => {
-    if (tree.assignedTask && tree.durability > 0) {
-      const cycleDuration =
-        tree.assignedTask === "wood" ? WOOD_CYCLE_SECONDS : FOOD_CYCLE_SECONDS;
-      const progressPerSecond = 100 / cycleDuration;
-      const progressGained = (deltaTime / 1000) * progressPerSecond;
-      const newProgress = tree.progress + progressGained;
+// --- Lógica de Ciclos de Entorno (MODIFICADO) ---
+  // Ahora solo procesamos el árbol que está activo.
+  const activeTree = state.activeTreeId
+    ? state.getTreeById(state.activeTreeId)
+    : null;
 
-      if (newProgress >= 100) {
-        state.processTreeCycle(tree.id);
-      } else {
-        state.updateTreeProgress(tree.id, newProgress);
-      }
+  if (activeTree && activeTree.assignedTask && activeTree.durability > 0) {
+    const cycleDuration =
+      activeTree.assignedTask === 'wood' ? WOOD_CYCLE_SECONDS : FOOD_CYCLE_SECONDS;
+    const progressPerSecond = 100 / cycleDuration;
+    const progressGained = (deltaTime / 1000) * progressPerSecond;
+    const newProgress = activeTree.progress + progressGained;
+
+    if (newProgress >= 100) {
+      state.processTreeCycle(activeTree.id);
+    } else {
+      state.updateTreeProgress(activeTree.id, newProgress);
     }
-  });
+  }
+
+  // --- Lógica de Subida de Nivel ---
   const totalXpForLevel = calculateXpForLevel(state.explorationLevel);
   if (state.currentXp >= totalXpForLevel) {
     const excessXp = state.currentXp - totalXpForLevel;
@@ -108,8 +113,9 @@ const gameLoop = (timestamp: number) => {
 // ====================================================================
 useGameStore.subscribe((state) => {
   const { getState } = useGameStore;
-  const shouldLoopRun =
-    state.isExploring || state.trees.some((t) => t.assignedTask);
+  
+  // El bucle debe correr si estamos explorando O si hay un árbol activo.
+  const shouldLoopRun = state.isExploring || state.activeTreeId !== null;
 
   if (shouldLoopRun && !state.isLoopRunning) {
     getState().setLoopRunning(true);
