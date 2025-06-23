@@ -1,0 +1,16 @@
+.container {
+    padding: 20px;
+}
+
+.placeholder {
+    margin-top: 3rem;
+    padding: 2rem;
+    border: 2px dashed #444;
+    border-radius: 8px;
+    text-align: center;
+    color: #888;
+}
+
+.placeholder p {
+    margin: 0.5rem 0;
+}

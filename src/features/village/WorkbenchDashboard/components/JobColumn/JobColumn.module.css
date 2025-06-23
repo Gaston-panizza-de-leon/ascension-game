@@ -1,0 +1,27 @@
+.column {
+  flex: 1;
+  min-width: 200px;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+.column.over {
+  background-color: rgba(0, 255, 0, 0.1);
+}
+.column.full {
+  opacity: 0.6;
+}
+.title {
+  text-align: center;
+  margin-top: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #555;
+}
+.content {
+  min-height: 150px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-content: flex-start;
+}

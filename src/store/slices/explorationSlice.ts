@@ -1,62 +1,31 @@
-// src/store/slices/explorationSlice.ts
-
 import type { StateCreator } from 'zustand';
-import type { GameState } from '../gameStore';
 
-// --- LÓGICA Y CONSTANTES DE ESTE SLICE ---
-const BASE_XP_REQUIRED = 5;
-const XP_MULTIPLIER = 1.1;
-
+// --- CONSTANTES ---
 export const calculateXpForLevel = (level: number): number => {
+  const BASE_XP_REQUIRED = 5;
+  const XP_MULTIPLIER = 1.1;
   return BASE_XP_REQUIRED * Math.pow(XP_MULTIPLIER, level - 1);
 };
 
-// --- INTERFAZ PARA ESTE SLICE ---
-// Define la forma de esta "rebanada" del estado
+// --- INTERFAZ ---
 export interface ExplorationSlice {
   explorationLevel: number;
   currentXp: number;
-  isExploring: boolean;
-  intervalId: number | null;
-  
-  setExploring: (isExploring: boolean) => void;
   addXp: (amount: number) => void;
   levelUp: () => void;
   resetXp: () => void;
-  setIntervalId: (id: number | null) => void;
 }
 
-// --- CREACIÓN DEL SLICE ---
-// Es una función que recibe `set` y `get` (de Zustand) y devuelve el objeto del slice.
-// Usamos `StateCreator` para el tipado, que nos ayuda a componer slices.
-export const createExplorationSlice: StateCreator<
-  GameState,
-  [],
-  [],
-  ExplorationSlice
-> = (set, get) => ({
+// --- CREACIÓN ---
+export const createExplorationSlice: StateCreator<ExplorationSlice> = (
+  set
+) => ({
   explorationLevel: 1,
   currentXp: 0,
-  isExploring: false,
-  intervalId: null,
-
- setExploring: (exploring) => {
-    // ====================================================================
-    // CAMBIO CLAVE: La exploración ahora solo quita el foco, no borra tareas.
-    // ====================================================================
-    if (exploring) {
-      // Al empezar a explorar, quitamos el foco de cualquier árbol.
-      set({ isExploring: true, activeTreeId: null });
-    } else {
-      // Al parar de explorar, simplemente lo indicamos.
-      set({ isExploring: false });
-    }
-  },
-  
   addXp: (amount) => set((state) => ({ currentXp: state.currentXp + amount })),
   resetXp: () => set({ currentXp: 0 }),
-  levelUp: () => set((state) => ({ 
-    explorationLevel: state.explorationLevel + 1 
-  })),
-  setIntervalId: (id) => set({ intervalId: id }),
+  levelUp: () =>
+    set((state) => ({
+      explorationLevel: state.explorationLevel + 1,
+    })),
 });

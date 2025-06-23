@@ -1,90 +1,62 @@
 import { useGameStore } from "../../../store/gameStore";
 import { TreeCard } from "../components/TreeCard/TreeCard";
-import styles from "./TreesDashboard.module.css";
+import styles from "./TreesDashboard.module.css"; // Puedes reutilizar o crear uno nuevo
 
 const TreesDashboard = () => {
-  // Sacamos los árboles y la acción para asignar tareas del store
   const trees = useGameStore((state) => state.trees);
-  const assignTaskToTree = useGameStore((state) => state.assignTaskToTree);
-  const activeTreeId = useGameStore((state) => state.activeTreeId);
+  const villagers = useGameStore((state) => state.villagers);
+  const playerTask = useGameStore((state) => state.playerTask);
+  const setTreeTaskType = useGameStore((state) => state.setTreeTaskType);
+  const setPlayerTask = useGameStore((state) => state.setPlayerTask);
+  const unassignedVillagersByTask = useGameStore((state) => state.unassignVillagersByTask);
 
-  // 1. Árboles nuevos, sin tarea asignada.
-  const unassignedTrees = trees.filter((tree) => tree.assignedTask === null);
+  // La lógica de filtrado ahora se basa en 'taskType', que define la función del árbol
+  const unassignedTrees = trees.filter((tree) => tree.taskType === null);
+  const foodTrees = trees.filter((tree) => tree.taskType === "food");
+  const woodTrees = trees.filter((tree) => tree.taskType === "wood");
 
-  // 2. Árboles asignados a la recolección de comida.
-  const foodTrees = trees.filter((tree) => tree.assignedTask === "food");
+  // Función para renderizar las tarjetas, pasando las props correctas
+  const renderTreeCards = (treeList: typeof trees) => {
+    return treeList.map((tree) => {
+      // Para cada tarjeta, calculamos su estado de ocupación
+      const assignedVillager = villagers.find(
+        (v) => v.assignedTask?.targetId === tree.id
+      );
 
-  // 3. Árboles asignados a la tala de madera.
-  const woodTrees = trees.filter((tree) => tree.assignedTask === "wood");
+      const isPlayerWorkingHere = playerTask?.targetId === tree.id;
+      return (
+        <TreeCard
+          key={tree.id}
+          tree={tree}
+          assignedVillager={assignedVillager}
+          isPlayerWorkingHere={isPlayerWorkingHere}
+          onSetTreeTaskType={setTreeTaskType}
+          onPlayerAssignTask={setPlayerTask}
+          onUnassignVillager={unassignedVillagersByTask}
+        />
+      );
+    });
+  };
 
   return (
     <div>
-      <h2>Entorno</h2>
-      <p>Recursos descubiertos. Asigna tareas para recolectar materiales.</p>
-
-      {/* ==================================================================== */}
-      {/* NUEVA SECCIÓN: Contenedor para árboles sin asignar                 */}
-      {/* ==================================================================== */}
       {unassignedTrees.length > 0 && (
         <div className={styles.unassignedSection}>
           <h4>Nuevos Descubrimientos</h4>
           <div className={styles.unassignedContainer}>
-            {unassignedTrees.map((tree) => (
-              <TreeCard
-                key={tree.id}
-                tree={tree}
-                onAssignTask={assignTaskToTree}
-                isActive={tree.id === activeTreeId}
-              />
-            ))}
+            {renderTreeCards(unassignedTrees)}
           </div>
         </div>
       )}
-      {/* Contenedor principal para el layout de dos columnas */}
       <div className={styles.layoutContainer}>
-        {/* Columna Izquierda: Comida y Nuevos Árboles */}
         <div className={styles.column}>
           <h3>Recolección Sostenible (Comida)</h3>
-          <div className={styles.treesGrid}>
-            {foodTrees.length === 0 ? (
-              <p className={styles.emptyMessage}>
-                No hay árboles para recolectar comida.
-              </p>
-            ) : (
-              foodTrees.map((tree) => (
-                <TreeCard
-                  key={tree.id}
-                  tree={tree}
-                  onAssignTask={assignTaskToTree}
-                  isActive={tree.id === activeTreeId}
-                />
-              ))
-            )}
-          </div>
+          <div className={styles.treesGrid}>{renderTreeCards(foodTrees)}</div>
         </div>
-
-        {/* Separador Visual */}
         <div className={styles.separator}></div>
-
-        {/* Columna Derecha: Madera */}
         <div className={styles.column}>
           <h3>Tala (Madera)</h3>
-          <div className={styles.treesGrid}>
-            {woodTrees.length === 0 ? (
-              <p className={styles.emptyMessage}>
-                No hay árboles asignados a la tala.
-              </p>
-            ) : (
-              woodTrees.map((tree) => (
-                <TreeCard
-                  key={tree.id}
-                  tree={tree}
-                  onAssignTask={assignTaskToTree}
-                  isActive={tree.id === activeTreeId}
-                />
-              ))
-            )}
-          </div>
+          <div className={styles.treesGrid}>{renderTreeCards(woodTrees)}</div>
         </div>
       </div>
     </div>

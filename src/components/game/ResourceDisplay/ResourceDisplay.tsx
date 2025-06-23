@@ -8,25 +8,51 @@ export const ResourceDisplay = () => {
   const wood = useGameStore((state) => state.wood);
   const food = useGameStore((state) => state.food);
   const stone = useGameStore((state) => state.stone);
+  const totalVillagers = useGameStore((state) => state.villagers.length);
+  const freeVillagers = useGameStore((state) => state.villagers.filter((v) => v.assignedTask === null).length);
 
+  const hasResourcesToShow = wood > 0 || food > 0 || stone > 0 || totalVillagers > 0;
+
+  if (!hasResourcesToShow) {
+    return null;
+  }
   return (
-    // Ahora es un panel que contendrá la lista de recursos
     <div className={styles.resourcePanel}>
-      <div className={styles.resourceItem}>
-        <span className={styles.icon}>🪓</span>
-        <span className={styles.name}>Madera</span>
-        <span className={styles.value}>{Math.floor(wood)}</span>
-      </div>
-      <div className={styles.resourceItem}>
-        <span className={styles.icon}>🍎</span>
-        <span className={styles.name}>Comida</span>
-        <span className={styles.value}>{Math.floor(food)}</span>
-      </div>
+      {wood > 0 && (
+        <div className={styles.resourceItem}>
+          <span className={styles.icon}>🪓</span>
+          <span className={styles.name}>Madera</span>
+          <span className={styles.value}>{Math.floor(wood)}</span>
+        </div>
+      )}
+      {food > 0 && (
+        <div className={styles.resourceItem}>
+          <span className={styles.icon}>🍎</span>
+          <span className={styles.name}>Comida</span>
+          <span className={styles.value}>{Math.floor(food)}</span>
+        </div>
+      )}
+      {stone > 0 && (
       <div className={styles.resourceItem}>
         <span className={styles.icon}>💎</span>
         <span className={styles.name}>Piedra</span>
         <span className={styles.value}>{Math.floor(stone)}</span>
       </div>
+      )}
+            {totalVillagers > 0 && (
+        <div className={styles.resourceItem}>
+          <span className={styles.icon}>🧑‍🤝‍🧑</span>
+          <span className={styles.name}>Aldeanos</span>
+          <span className={styles.value}>{totalVillagers}</span>
+        </div>
+      )}
+            {totalVillagers > 0 && (
+        <div className={styles.resourceItem}>
+          <span className={styles.icon}>🧑‍🤝‍🧑</span>
+          <span className={styles.name}>Ocupación</span>
+          <span className={styles.value}>{`${freeVillagers}/${totalVillagers}`}</span>
+        </div>
+      )}
     </div>
   );
 };

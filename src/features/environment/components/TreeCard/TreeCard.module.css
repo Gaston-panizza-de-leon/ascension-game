@@ -3,45 +3,54 @@
   border-radius: 12px;
   width: 250px;
   background-color: #2e2e2e;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  margin: 10px;
   transition: all 0.2s ease-in-out;
+  position: relative;
 }
-
 .card.active {
   border-color: #FFA500;
-  box-shadow: 0 0 15px rgba(255, 165, 0, 0.5);
 }
 
-.card.paused {
-  border-color: #555;
-  opacity: 0.8;
-  cursor: pointer; 
+.card.clickable {
+  cursor: pointer;
 }
-
-/* AÑADIDO: Efecto hover para la tarjeta pausada */
-.card.paused:hover {
-  opacity: 1;
+.card.clickable:hover {
   border-color: #999;
   transform: translateY(-2px);
 }
 
-.imageContainer {
-  background-color: #3a3a3a;
-  padding: 20px;
+.unassignButton {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  color: white;
+  border: 1px solid #777;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 3;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+.unassignButton:hover {
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
-.image {
-  width: 100px;
-  height: 100px;
+.workerIcon {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 28px;
+  height: 28px;
+  z-index: 2;
+  border-radius: 50%;
+  padding: 2px;
 }
 
-/* --- ESTILOS PARA LA BARRA CIRCULAR --- */
 .circularProgress {
   border-radius: 50%;
   width: 140px;
@@ -51,9 +60,10 @@
   align-items: center;
   margin: 20px auto;
   transition: background 0.1s linear;
+  background-color: #3a3a3a;
 }
 
-.circularProgress .image {
+.image {
   width: 110px;
   height: 110px;
   border-radius: 50%;
@@ -63,13 +73,24 @@
 }
 
 .info {
-  padding: 15px;
+  padding: 0 15px 15px 15px;
   text-align: center;
-  flex-grow: 1; /* Para que ocupe espacio y empuje las acciones abajo */
+  flex-grow: 1; /* CLAVE para altura consistente */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-
 .info h3 {
   margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.status {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #FFA500;
+  height: 24px; /* Altura fija para el texto de estado */
+  margin: 0;
 }
 
 .durability {
@@ -79,64 +100,34 @@
   align-items: center;
   gap: 8px;
   justify-content: center;
+  height: 20px; /* Altura fija para la barra o su placeholder */
+  margin-top: 8px;
 }
-
 .durability progress {
   width: 100px;
 }
 
-.placeholder {
-  visibility: hidden;
-}
-
-.task {
-  font-weight: bold;
-  color: #FFA500;
-}
-
 .actions {
   display: flex;
-  justify-content: space-around;
-  margin-top: 30px;
+  justify-content: center; /* Centramos el botón que quede */
+  padding: 0 15px 15px 15px;
+  height: 40px; /* Altura fija para el contenedor de acciones */
 }
 
 .actions button {
   background-color: #555;
   color: white;
   border: 1px solid #666;
-  padding: 8px 12px;
+  padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.2s ease;
 }
-
-.actions button:hover {
-  background-color: #666;
+.actions button:hover:not(:disabled) {
+  background-color: #6a6a6a;
 }
-
-.switchActions {
-  padding: 0 15px 15px 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.switchActions button {
-  width: 100%;
-  background-color: #4a4a4a;
-  color: white;
-  border: 1px solid #666;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.switchActions button:hover:not(:disabled) {
-  background-color: #5a5a5a;
-}
-
-.switchActions button:disabled {
+.actions button:disabled {
   background-color: #333;
   color: #777;
   cursor: not-allowed;

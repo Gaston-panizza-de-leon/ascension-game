@@ -1,42 +1,37 @@
-// src/features/exploration/ExplorationDashboard.tsx
-
+import { useGameStore } from '../../store/gameStore';
+import { calculateXpForLevel } from '../../store/slices/explorationSlice';
 import ActionProgressBar from '../../components/molecules/ActionProgressBar/ActionProgressBar';
-import { useExploration } from './useExploration';
 
 const ExplorationDashboard = () => {
-  // --- Usamos el hook refactorizado y obtenemos los nuevos datos ---
-  const {
-    explorationLevel,
-    currentXp,
-    totalXpForLevel,
-    isExploring,
-    toggleExploration, // Ahora se llama toggleExploration
-  } = useExploration();
+  // Leemos los datos que necesitamos directamente del store central
+  const explorationLevel = useGameStore((state) => state.explorationLevel);
+  const currentXp = useGameStore((state) => state.currentXp);
+  const playerTask = useGameStore((state) => state.playerTask);
+  const setPlayerTask = useGameStore.getState().setPlayerTask;
 
-  // --- Preparamos los datos para el componente de UI ---
+  // El jugador está explorando si su tarea actual es de tipo 'exploration'
+  const isExploring = playerTask?.type === 'exploration';
 
-  // Calculamos el progreso en porcentaje para la barra visual
-  const progressPercent = (currentXp / totalXpForLevel) * 100;
-
-  // Creamos la etiqueta de texto con el formato "actual / total XP"
-  // .toFixed(2) muestra el número con 2 decimales, útil para la XP.
+  const totalXpForLevel = calculateXpForLevel(explorationLevel);
+  const progressPercent =
+    totalXpForLevel > 0 ? (currentXp / totalXpForLevel) * 100 : 0;
   const label = `${currentXp.toFixed(2)} / ${totalXpForLevel.toFixed(2)} XP`;
+  const buttonText = isExploring ? 'Pausar Exploración' : 'Explorar';
 
-  // El texto del botón cambia dependiendo de si estamos explorando o no.
-  const buttonText = isExploring ? "Pausar Exploración" : "Explorar";
-
+  // La acción de explorar ahora simplemente asigna la tarea al jugador
+  const toggleExploration = () => {
+    setPlayerTask(isExploring ? null : { type: 'exploration' });
+  };
 
   return (
     <div>
       <h2>Exploración (Nivel: {explorationLevel})</h2>
       <ActionProgressBar
-        progress={progressPercent} // Le pasamos el progreso en %
-        label={label}              // Le pasamos el nuevo texto de la etiqueta
-        onClick={toggleExploration} // La acción ahora es pausar/reanudar
-        // Ya no necesitamos 'disabled', el botón siempre está activo
-        isActive={isExploring} // La prop 'isActive' sigue siendo útil para el estilo
+        progress={progressPercent}
+        label={label}
+        onClick={toggleExploration}
+        isActive={isExploring}
       />
-      {/* Añadimos el texto del botón debajo para más claridad */}
       <p>{buttonText}</p>
     </div>
   );

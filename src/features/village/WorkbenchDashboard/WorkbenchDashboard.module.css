@@ -1,0 +1,89 @@
+/* =============================================
+   Contenedor Principal del Banco de Trabajo
+   ============================================= */
+.container {
+  display: flex;
+  /* Espacio entre la columna de desempleados y la de trabajos */
+  gap: 2rem;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box; /* Para que el padding no afecte al ancho total */
+}
+
+/* =============================================
+   Separador Vertical
+   ============================================= */
+.separator {
+  width: 2px;
+  /* Un gris oscuro que se integre bien */
+  background-color: #3a3a3a;
+  border-radius: 1px;
+  /* Se estira para ocupar toda la altura del contenedor flex */
+  align-self: stretch;
+}
+
+/* =============================================
+   Área de Trabajos (Contenedor de las columnas de la derecha)
+   ============================================= */
+.jobsArea {
+  flex: 3; /* Le damos más espacio que a la columna de desempleados */
+  display: flex;
+  flex-direction: column;
+  /* Espacio entre cada columna de trabajo (explorar, talar, etc.) */
+  gap: 1.5rem;
+}
+
+/* =============================================
+   Estilos que se aplican a cada JobColumn
+   (Estos estilos irían en JobColumn.module.css, 
+    pero los pongo aquí como referencia para que veas el conjunto)
+   ============================================= */
+
+/* .column { ... } en JobColumn.module.css */
+/* .title { ... } en JobColumn.module.css */
+/* .content { ... } en JobColumn.module.css */
+
+/* Por si acaso, te dejo aquí los estilos completos y mejorados
+   para los componentes que ya creamos, para que todo encaje. */
+
+/* Estilos para JobColumn.module.css */
+.column {
+  flex: 1;
+  min-width: 200px;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px dashed #444;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.column.over {
+  background-color: rgba(80, 150, 80, 0.15);
+  border-style: solid;
+  border-color: #5a5;
+}
+
+.column.full {
+  opacity: 0.6;
+  background-color: rgba(150, 50, 50, 0.1);
+  border-color: #722;
+  border-style: solid;
+}
+
+.title {
+  text-align: center;
+  margin-top: 0;
+  padding-bottom: 0.8rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #555;
+  color: #ccc;
+  font-size: 1.2rem;
+}
+
+.content {
+  min-height: 100px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-content: flex-start;
+}

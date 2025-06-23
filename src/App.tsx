@@ -1,31 +1,33 @@
 // src/App.tsx
 import { useState } from 'react'; // 1. Importa useState
 import ExplorationDashboard from './features/exploration/ExplorationDashboard';
-import EnvironmentDashboard from './features/environment/EnvironmentDashboard.tsx'; // 2. Importa el nuevo dashboard
-import Tabs, { type TabItem } from './components/molecules/Tabs/Tabs.tsx'; // 3. Importa el componente Tabs
-import { ResourceDisplay } from './components/game/ResourceDisplay/ResourceDisplay.tsx'; // 4. Importa el componente de recursos
+import EnvironmentDashboard from './features/environment/EnvironmentDashboard.tsx';
+import Tabs, { type TabItem } from './components/molecules/Tabs/Tabs.tsx';
+import { ResourceDisplay } from './components/game/ResourceDisplay/ResourceDisplay.tsx';
+import VillageDashboard from './features/village/VillageDashBoard.tsx';
 import './App.css';
 
-// Definimos los tabs que usará nuestra aplicación
 const mainTabs: TabItem[] = [
   { id: 'exploracion', label: 'Exploración' },
   { id: 'entorno', label: 'Entorno' },
+  { id: 'aldea', label: 'Aldea' },
 ];
 
 function App() {
-  // 4. Creamos una variable de estado para guardar el ID de la pestaña activa.
-  //    Por defecto, empezamos en 'exploracion'.
+
   const [activeTab, setActiveTab] = useState('exploracion');
 
-  // 5. Función para renderizar el contenido de la pestaña activa
+
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'exploracion':
         return <ExplorationDashboard />;
       case 'entorno':
         return <EnvironmentDashboard />;
+      case 'aldea':
+        return <VillageDashboard />;
       default:
-        return <ExplorationDashboard />; // Por si acaso, muestra exploración
+        return <ExplorationDashboard />;
     }
   };
 
@@ -37,14 +39,11 @@ function App() {
       </header>
 
       <main>
-        {/* 6. Renderizamos nuestro componente de Tabs */}
         <Tabs
           tabs={mainTabs}
           activeTab={activeTab}
-          onTabClick={setActiveTab} // Le pasamos la función para cambiar el estado
+          onTabClick={setActiveTab}
         />
-
-        {/* 7. Renderizamos el contenido de la pestaña activa */}
         <div className="tab-content">
           {renderActiveTabContent()}
         </div>

@@ -1,122 +1,98 @@
 import { create } from "zustand";
-import {
-  type ExplorationSlice,
-  createExplorationSlice,
-  calculateXpForLevel,
-} from "./slices/explorationSlice";
-import {
-  type ResourceSlice,
-  createResourceSlice,
-} from "./slices/resourceSlice";
-import {
-  type EnvironmentSlice,
-  createEnvironmentSlice,
-} from "./slices/environmentSlice";
+import { type ExplorationSlice, createExplorationSlice, calculateXpForLevel } from "./slices/explorationSlice";
+import { type ResourceSlice, createResourceSlice } from "./slices/resourceSlice";
+import { type EnvironmentSlice, createEnvironmentSlice } from "./slices/environmentSlice";
+import { type VillageSlice, createVillageSlice } from "./slices/villageSlice";
+import { type VillagersSlice, createVillagersSlice } from "./slices/villagersSlice";
+import { type PlayerSlice, createPlayerSlice } from "./slices/playerSlice";
 
-// --- CONSTANTES GLOBALES DE JUEGO ---
-const XP_GAIN_PER_SECOND = 100;
-const WOOD_CYCLE_SECONDS = 10; // Talar es más rápido
-const FOOD_CYCLE_SECONDS = 10; // Recolectar comida es más lento
+// --- CONSTANTES ---
+const XP_GAIN_PER_UNIT = 300; // La ganancia de XP es por "unidad" (jugador o aldeano)
+const WOOD_CYCLE_SECONDS = 5;
+const FOOD_CYCLE_SECONDS = 10;
 
-// --- TIPO GLOBAL DEL STORE ---
-// 1. AÑADIMOS ESTADO PARA MANEJAR EL NUEVO BUCLE DE JUEGO
-export type GameState = ExplorationSlice &
-  ResourceSlice &
-  EnvironmentSlice & {
+// --- TIPO GLOBAL ---
+export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & VillageSlice & VillagersSlice & PlayerSlice & {
     lastTickTimestamp: number;
     isLoopRunning: boolean;
     setLoopRunning: (isRunning: boolean) => void;
     setLastTickTimestamp: (ts: number) => void;
   };
 
-// --- CREACIÓN DEL STORE ENSAMBLANDO SLICES ---
+// --- CREACIÓN DEL STORE ---
 export const useGameStore = create<GameState>()((...a) => ({
   ...createExplorationSlice(...a),
   ...createResourceSlice(...a),
   ...createEnvironmentSlice(...a),
-
-  // 2. VALORES INICIALES PARA EL ESTADO DEL BUCLE
+  ...createVillageSlice(...a),
+  ...createVillagersSlice(...a),
+  ...createPlayerSlice(...a),
   lastTickTimestamp: 0,
   isLoopRunning: false,
   setLoopRunning: (isRunning) => a[0]({ isLoopRunning: isRunning }),
   setLastTickTimestamp: (ts) => a[0]({ lastTickTimestamp: ts }),
 }));
 
-// ====================================================================
-// 3. NUEVO MOTOR DEL JUEGO BASADO EN requestAnimationFrame
-// ====================================================================
-
+// --- MOTOR DEL JUEGO UNIFICADO ---
 const gameLoop = (timestamp: number) => {
   const { getState } = useGameStore;
   const state = getState();
+  if (!state.isLoopRunning) return;
 
-  // Si el bucle se detuvo desde el exterior, no continuamos
-  if (!state.isLoopRunning) {
-    return;
-  }
-
-  // Calculamos el deltaTime para que la velocidad del juego sea consistente
   const deltaTime = timestamp - state.lastTickTimestamp;
   getState().setLastTickTimestamp(timestamp);
 
-  // --- Lógica de Exploración ---
-  if (state.isExploring) {
-    const xpGained = (deltaTime / 1000) * XP_GAIN_PER_SECOND;
+  // --- LÓGICA DE EXPLORACIÓN UNIFICADA ---
+  const isPlayerExploring = state.playerTask?.type === 'exploration';
+  const explorationVillagersCount = state.villagers.filter(v => v.assignedTask?.type === 'exploration').length;
+  const totalExplorationEffort = (isPlayerExploring ? 1 : 0) + explorationVillagersCount;
+
+  if (totalExplorationEffort > 0) {
+    const xpGained = (deltaTime / 1000) * XP_GAIN_PER_UNIT * totalExplorationEffort;
     state.addXp(xpGained);
   }
 
-// --- Lógica de Ciclos de Entorno (MODIFICADO) ---
-  // Ahora solo procesamos el árbol que está activo.
-  const activeTree = state.activeTreeId
-    ? state.getTreeById(state.activeTreeId)
-    : null;
+  // --- LÓGICA DE RECURSOS UNIFICADA ---
+  state.trees.forEach((tree) => {
+    const isPlayerWorkingHere = state.playerTask?.targetId === tree.id;
+    const villagerWorker = state.villagers.find(v => v.assignedTask?.targetId === tree.id);
 
-  if (activeTree && activeTree.assignedTask && activeTree.durability > 0) {
-    const cycleDuration =
-      activeTree.assignedTask === 'wood' ? WOOD_CYCLE_SECONDS : FOOD_CYCLE_SECONDS;
-    const progressPerSecond = 100 / cycleDuration;
-    const progressGained = (deltaTime / 1000) * progressPerSecond;
-    const newProgress = activeTree.progress + progressGained;
+    if (isPlayerWorkingHere || villagerWorker) {
+      const workerTask = isPlayerWorkingHere ? state.playerTask! : villagerWorker!.assignedTask!;
+      const cycleDuration = workerTask.type === 'wood' ? WOOD_CYCLE_SECONDS : FOOD_CYCLE_SECONDS;
+      const progressPerSecond = 100 / cycleDuration;
+      const progressGained = (deltaTime / 1000) * progressPerSecond;
+      const newProgress = tree.progress + progressGained;
 
-    if (newProgress >= 100) {
-      state.processTreeCycle(activeTree.id);
-    } else {
-      state.updateTreeProgress(activeTree.id, newProgress);
+      if (newProgress >= 100) {
+        state.processTreeCycle(tree.id);
+      } else {
+        state.updateTreeProgress(tree.id, newProgress);
+      }
+    } else if (tree.progress > 0) {
+      state.updateTreeProgress(tree.id, 0);
     }
-  }
+  });
 
-  // --- Lógica de Subida de Nivel ---
+  // --- LÓGICA DE SUBIDA DE NIVEL ---
   const totalXpForLevel = calculateXpForLevel(state.explorationLevel);
   if (state.currentXp >= totalXpForLevel) {
     const excessXp = state.currentXp - totalXpForLevel;
     const newLevel = state.explorationLevel + 1;
-
     getState().levelUp();
     getState().resetXp();
     getState().addXp(excessXp);
-    console.log(`¡NIVEL DE EXPLORACIÓN COMPLETADO! Nuevo nivel: ${newLevel}`);
-
-    if (newLevel % 4 === 0) {
-      console.log("¡Has descubierto un nuevo árbol en tus exploraciones!");
-      getState().discoverNewTree();
-    }
+    if (newLevel % 4 === 0) getState().discoverNewTree();
+    if (newLevel % 10 === 0) getState().discoverNewVillager();
   }
 
-  // Solicitamos al navegador que vuelva a ejecutar gameLoop en el siguiente fotograma
   requestAnimationFrame(gameLoop);
 };
 
-// ====================================================================
-// 4. EL SUBSCRIBE AHORA ES MÁS SIMPLE
-// Su única responsabilidad es arrancar/parar el bucle y reaccionar a eventos
-// puntuales como la subida de nivel.
-// ====================================================================
+// El bucle corre si el jugador o un aldeano están trabajando
 useGameStore.subscribe((state) => {
   const { getState } = useGameStore;
-  
-  // El bucle debe correr si estamos explorando O si hay un árbol activo.
-  const shouldLoopRun = state.isExploring || state.activeTreeId !== null;
-
+  const shouldLoopRun = state.playerTask !== null || state.villagers.some(v => v.assignedTask !== null);
   if (shouldLoopRun && !state.isLoopRunning) {
     getState().setLoopRunning(true);
     getState().setLastTickTimestamp(performance.now());
