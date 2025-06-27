@@ -1,8 +1,9 @@
-import type { StateCreator } from 'zustand';
-import type { GameState } from '../gameStore';
+import type { StateCreator } from "zustand";
+import type { GameState } from "../gameStore";
+import { faker } from "@faker-js/faker/locale/es";
 
 // --- TIPOS (Exportados para que otros slices los usen) ---
-export type TaskType = 'exploration' | 'wood' | 'food';
+export type TaskType = "exploration" | "wood" | "food";
 
 export interface VillagerTask {
   type: TaskType;
@@ -11,8 +12,9 @@ export interface VillagerTask {
 
 export interface Villager {
   id: number;
+  name: string;
   assignedTask: VillagerTask | null;
-  gender: 'F' | 'M';
+  sex: "male" | "female";
 }
 
 // --- INTERFAZ DEL SLICE ---
@@ -33,20 +35,21 @@ export const createVillagersSlice: StateCreator<
   villagers: [],
 
   discoverNewVillager: () => {
+    const setSetx = faker.person.sex() === "male" ? "male" : "female";
     set((state) => {
       const newVillager: Villager = {
         id: state.villagers.length + 1,
         assignedTask: null,
-        gender: Math.random() < 0.5 ? 'M' : 'F',
+        sex: setSetx,
+        name: faker.person.firstName(setSetx),
       };
-      console.log('Género generado:', newVillager.gender);
       return { villagers: [...state.villagers, newVillager] };
     });
   },
 
   assignTaskToVillager: (villagerId, task) => {
     // Validación: Un aldeano no puede hacer una tarea de árbol si el jugador ya está ahí.
-    if (task && task.type !== 'exploration') {
+    if (task && task.type !== "exploration") {
       const playerTask = get().playerTask;
       if (
         playerTask?.type === task.type &&
@@ -67,15 +70,18 @@ export const createVillagersSlice: StateCreator<
       ),
     }));
   },
-  
+
   unassignVillagersByTask: (task) => {
     set((state) => ({
-      villagers: state.villagers.map(v => {
-        if (v.assignedTask?.type === task.type && v.assignedTask?.targetId === task.targetId) {
+      villagers: state.villagers.map((v) => {
+        if (
+          v.assignedTask?.type === task.type &&
+          v.assignedTask?.targetId === task.targetId
+        ) {
           return { ...v, assignedTask: null };
         }
         return v;
-      })
+      }),
     }));
-  }
+  },
 });

@@ -1,6 +1,4 @@
-/* =============================================
-   Contenedor Principal del Banco de Trabajo
-   ============================================= */
+
 .container {
   display: flex;
   /* Espacio entre la columna de desempleados y la de trabajos */
@@ -10,9 +8,7 @@
   box-sizing: border-box; /* Para que el padding no afecte al ancho total */
 }
 
-/* =============================================
-   Separador Vertical
-   ============================================= */
+
 .separator {
   width: 2px;
   /* Un gris oscuro que se integre bien */
@@ -22,9 +18,6 @@
   align-self: stretch;
 }
 
-/* =============================================
-   Área de Trabajos (Contenedor de las columnas de la derecha)
-   ============================================= */
 .jobsArea {
   flex: 3; /* Le damos más espacio que a la columna de desempleados */
   display: flex;
@@ -33,20 +26,6 @@
   gap: 1.5rem;
 }
 
-/* =============================================
-   Estilos que se aplican a cada JobColumn
-   (Estos estilos irían en JobColumn.module.css, 
-    pero los pongo aquí como referencia para que veas el conjunto)
-   ============================================= */
-
-/* .column { ... } en JobColumn.module.css */
-/* .title { ... } en JobColumn.module.css */
-/* .content { ... } en JobColumn.module.css */
-
-/* Por si acaso, te dejo aquí los estilos completos y mejorados
-   para los componentes que ya creamos, para que todo encaje. */
-
-/* Estilos para JobColumn.module.css */
 .column {
   flex: 1;
   min-width: 200px;

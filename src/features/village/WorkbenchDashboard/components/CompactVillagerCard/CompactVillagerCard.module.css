@@ -1,18 +1,30 @@
 .card {
-  padding: 8px 12px;
+  display: flex; /* La clave para alinear elementos horizontalmente */
+  align-items: center; /* Centra verticalmente el icono y el texto */
+  gap: 8px; /* Espacio entre el icono y el texto */
+  padding: 6px 12px;
   background-color: #3a3a3a;
   border: 1px solid #555;
-  border-radius: 6px;
+  border-radius: 50px; /* Bordes muy redondeados para el efecto "píldora" */
   cursor: grab;
-  text-align: center;
-  font-weight: bold;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 .card:active {
   cursor: grabbing;
+  background-color: #4f4f4f;
+  box-shadow: 0 0 10px rgba(127, 195, 255, 0.3); /* Un brillo sutil al arrastrar */
 }
 
 .workerIcon {
-  width: 20px;
-  height: 20px;
-  border-top: 2px solid #3a3a3a;;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%; /* Icono perfectamente circular */
+  object-fit: cover;
+}
+
+.villagerName {
+  font-weight: 600; /* Un poco menos grueso que 'bold' para más elegancia */
+  font-size: 0.9rem;
+  color: #e0e0e0;
 }

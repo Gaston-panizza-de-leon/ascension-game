@@ -90,7 +90,7 @@ export const TreeCard = ({
       {isOccupiedByVillager && (
         <img
           src={
-            assignedVillager.gender === "M" ? villagerMImage : villagerFImage
+            assignedVillager.sex === "male" ? villagerMImage : villagerFImage
           }
           alt="Aldeano trabajando"
           className={styles.workerIcon}
