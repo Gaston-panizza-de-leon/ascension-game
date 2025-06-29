@@ -5,14 +5,15 @@ import { type EnvironmentSlice, createEnvironmentSlice } from "./slices/environm
 import { type VillageSlice, createVillageSlice } from "./slices/villageSlice";
 import { type VillagersSlice, createVillagersSlice } from "./slices/villagersSlice";
 import { type PlayerSlice, createPlayerSlice } from "./slices/playerSlice";
+import { type TimeSlice, createTimeSlice, DAY_DURATION_MS } from './slices/timeSlice';
 
 // --- CONSTANTES ---
-const XP_GAIN_PER_UNIT = 300; // La ganancia de XP es por "unidad" (jugador o aldeano)
-const WOOD_CYCLE_SECONDS = 5;
-const FOOD_CYCLE_SECONDS = 10;
+const XP_GAIN_PER_UNIT = 300; // La ganancia de XP
+const WOOD_CYCLE_DAYS = 0.5;
+const FOOD_CYCLE_DAYS = 1;
 
 // --- TIPO GLOBAL ---
-export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & VillageSlice & VillagersSlice & PlayerSlice & {
+export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & VillageSlice & VillagersSlice & PlayerSlice & TimeSlice & {
     lastTickTimestamp: number;
     isLoopRunning: boolean;
     setLoopRunning: (isRunning: boolean) => void;
@@ -27,6 +28,7 @@ export const useGameStore = create<GameState>()((...a) => ({
   ...createVillageSlice(...a),
   ...createVillagersSlice(...a),
   ...createPlayerSlice(...a),
+  ...createTimeSlice(...a),
   lastTickTimestamp: 0,
   isLoopRunning: false,
   setLoopRunning: (isRunning) => a[0]({ isLoopRunning: isRunning }),
@@ -41,6 +43,8 @@ const gameLoop = (timestamp: number) => {
 
   const deltaTime = timestamp - state.lastTickTimestamp;
   getState().setLastTickTimestamp(timestamp);
+  const { advanceTime } = getState();
+  advanceTime(deltaTime);
 
   // --- LÓGICA DE EXPLORACIÓN UNIFICADA ---
   const isPlayerExploring = state.playerTask?.type === 'exploration';
@@ -59,9 +63,9 @@ const gameLoop = (timestamp: number) => {
 
     if (isPlayerWorkingHere || villagerWorker) {
       const workerTask = isPlayerWorkingHere ? state.playerTask! : villagerWorker!.assignedTask!;
-      const cycleDuration = workerTask.type === 'wood' ? WOOD_CYCLE_SECONDS : FOOD_CYCLE_SECONDS;
-      const progressPerSecond = 100 / cycleDuration;
-      const progressGained = (deltaTime / 1000) * progressPerSecond;
+      const cycleDuration = workerTask.type === 'wood' ? WOOD_CYCLE_DAYS : FOOD_CYCLE_DAYS;
+      const progressPerDays = 100 / cycleDuration;
+      const progressGained = (deltaTime / DAY_DURATION_MS) * progressPerDays;
       const newProgress = tree.progress + progressGained;
 
       if (newProgress >= 100) {
@@ -89,15 +93,13 @@ const gameLoop = (timestamp: number) => {
   requestAnimationFrame(gameLoop);
 };
 
-// El bucle corre si el jugador o un aldeano están trabajando
+ // El bucle corre si el jugador o un aldeano están trabajando
 useGameStore.subscribe((state) => {
   const { getState } = useGameStore;
-  const shouldLoopRun = state.playerTask !== null || state.villagers.some(v => v.assignedTask !== null);
+  const shouldLoopRun = state.playerTask !== null;
   if (shouldLoopRun && !state.isLoopRunning) {
     getState().setLoopRunning(true);
     getState().setLastTickTimestamp(performance.now());
     requestAnimationFrame(gameLoop);
-  } else if (!shouldLoopRun && state.isLoopRunning) {
-    getState().setLoopRunning(false);
   }
-});
+}); 

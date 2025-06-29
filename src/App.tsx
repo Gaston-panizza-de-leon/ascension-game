@@ -5,6 +5,7 @@ import EnvironmentDashboard from './features/environment/EnvironmentDashboard.ts
 import Tabs, { type TabItem } from './components/molecules/Tabs/Tabs.tsx';
 import { ResourceDisplay } from './components/game/ResourceDisplay/ResourceDisplay.tsx';
 import VillageDashboard from './features/village/VillageDashBoard.tsx';
+import { TimeDisplay } from './components/game/TimeDisplay/TimeDisplay.tsx';
 import './App.css';
 
 const mainTabs: TabItem[] = [
@@ -33,11 +34,11 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header"> 
         <h1>Ascension Game</h1>
-        <ResourceDisplay />
       </header>
-
+      <TimeDisplay />
+      <ResourceDisplay />
       <main>
         <Tabs
           tabs={mainTabs}
