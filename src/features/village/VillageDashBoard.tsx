@@ -3,10 +3,12 @@ import { useState } from 'react';
 import Tabs, { type TabItem } from '../../components/molecules/Tabs/Tabs';
 import VillagersDashboard from './VillagersDashboard/VillagersDashboard';
 import WorkbenchDashboard from './WorkbenchDashboard/WorkbenchDashboard';
+import BuildingsDashboard from './BuildingsDashboard/BuildingsDashboard';
 
 const villageTabs: TabItem[] = [
   { id: 'aldeanos', label: 'Aldeanos' },
-  { id: 'trabajo', label: 'Banco de Trabajo' }
+  { id: 'trabajo', label: 'Banco de Trabajo' },
+  { id: 'edificios', label: 'Panel de Construcción' }
 ];
 
 const VillageDashboard = () => {
@@ -18,6 +20,8 @@ const VillageDashboard = () => {
                 return <VillagersDashboard />;
             case 'trabajo':
                 return <WorkbenchDashboard />;
+            case 'edificios':
+                return <BuildingsDashboard />;
             default:
                 return null;
         }

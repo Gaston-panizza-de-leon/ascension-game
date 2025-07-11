@@ -1,0 +1,121 @@
+.card {
+  display: flex;
+  align-items: center;
+  background-color: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 16px;
+  gap: 16px;
+  transition: all 0.2s ease-in-out;
+}
+
+.card.inProgress {
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+/* --- ZONA IZQUIERDA --- */
+.identity {
+  display: flex;
+  align-items: center;
+  flex: 1; /* Ocupa el espacio disponible */
+  gap: 16px;
+}
+
+.image {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  object-fit: cover;
+  background-color: #3a3a3a;
+}
+
+.nameContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 1.2rem;
+}
+
+.counter {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.built {
+  color: #4caf50; /* Verde para indicar que ya está construido */
+  font-weight: bold;
+}
+
+/* --- ZONA CENTRAL --- */
+.progressSection {
+  flex: 2; /* Más espacio para la barra de progreso */
+  text-align: center;
+}
+
+.progressBarContainer {
+  position: relative;
+  height: 24px;
+  background-color: #1c1c1e;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #555;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700, #ff8c00);
+  transition: width 0.1s linear;
+}
+
+.progressText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.85rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.progressInfo {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #ffd700;
+}
+
+
+/* --- ZONA DERECHA --- */
+.actions {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buildButton {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.buildButton:hover:not(:disabled) {
+  background-color: #66bb6a;
+}
+
+.buildButton:disabled {
+  background-color: #555;
+  color: #888;
+  cursor: not-allowed;
+}

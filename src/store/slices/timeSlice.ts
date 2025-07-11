@@ -16,7 +16,6 @@ export const createTimeSlice: StateCreator<GameState, [], [], TimeSlice> = (set,
     const newProgress = get().timeOfDayProgress + (deltaTime / DAY_DURATION_MS);
 
     if (newProgress >= 1) {
-      // Ha pasado uno o más días
       const daysPassed = Math.floor(newProgress);
       set((state) => ({
         currentDay: state.currentDay + daysPassed,

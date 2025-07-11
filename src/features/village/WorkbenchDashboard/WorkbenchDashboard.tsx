@@ -11,6 +11,7 @@ const WorkbenchDashboard = () => {
   const assignTaskToVillager = useGameStore(
     (state) => state.assignTaskToVillager
   );
+  const activeConstruction = useGameStore((state) => state.activeConstruction);
 
   // Filtramos aldeanos por estado
   const unemployedVillagers = villagers.filter((v) => !v.assignedTask);
@@ -44,7 +45,8 @@ const WorkbenchDashboard = () => {
       case "explore":
         task = { type: "exploration" };
         break;
-      case "chop": { // Encontramos el primer árbol de tala libre
+      case "chop": {
+        // Encontramos el primer árbol de tala libre
         const freeWoodTree = woodTrees.find(
           (tree) =>
             !employedVillagers.some(
@@ -54,7 +56,8 @@ const WorkbenchDashboard = () => {
         if (freeWoodTree) task = { type: "wood", targetId: freeWoodTree.id };
         break;
       }
-      case "gather": { // Encontramos el primer árbol de comida libre
+      case "gather": {
+        // Encontramos el primer árbol de comida libre
         const freeFoodTree = foodTrees.find(
           (tree) =>
             !employedVillagers.some(
@@ -62,6 +65,13 @@ const WorkbenchDashboard = () => {
             ) && useGameStore.getState().playerTask?.targetId !== tree.id
         );
         if (freeFoodTree) task = { type: "food", targetId: freeFoodTree.id };
+        break;
+      }
+      case "construction": {
+        // Solo asignamos la tarea si hay una construcción activa
+        if (useGameStore.getState().activeConstruction) {
+          task = { type: "construction" };
+        }
         break;
       }
     }
@@ -104,6 +114,18 @@ const WorkbenchDashboard = () => {
           >
             {employedVillagers
               .filter((v) => v.assignedTask?.type === "food")
+              .map((v) => (
+                <CompactVillagerCard key={v.id} villager={v} />
+              ))}
+          </JobColumn>
+          <JobColumn
+            id="construction"
+            title="🏗️ Construir"
+            // La columna está "llena" (deshabilitada) si NO hay una construcción activa
+            isFull={!activeConstruction}
+          >
+            {employedVillagers
+              .filter((v) => v.assignedTask?.type === "construction")
               .map((v) => (
                 <CompactVillagerCard key={v.id} villager={v} />
               ))}

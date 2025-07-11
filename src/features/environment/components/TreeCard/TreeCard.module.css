@@ -110,6 +110,7 @@
 .actions {
   display: flex;
   justify-content: center; /* Centramos el botón que quede */
+  gap: 5px;
   padding: 0 15px 15px 15px;
   height: 40px; /* Altura fija para el contenedor de acciones */
 }
