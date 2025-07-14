@@ -8,6 +8,8 @@ import styles from "./TreeCard.module.css";
 import treeImage from "@assets/enviroment/tree.png";
 import villagerMImage from "@assets/villagers/villagerMReduced.png";
 import villagerFImage from "@assets/villagers/villagerFReduced.png";
+import { GiWoodAxe, GiFruitTree } from "react-icons/gi";
+import { FaTimes } from "react-icons/fa";
 
 interface TreeCardProps {
   tree: Tree;
@@ -82,7 +84,7 @@ export const TreeCard = ({
           className={styles.unassignButton}
           title="Liberar aldeano"
         >
-          X
+          <FaTimes />
         </button>
       )}
 
@@ -125,19 +127,19 @@ export const TreeCard = ({
       {/* Acciones del jugador: solo se muestra el botón de la tarea CONTRARIA */}
       <div className={styles.actions}>
         {tree.taskType !== "food" && (
-          <button
+          <button className={`${styles.actionButton} ${styles.foodButton}`} // Clase base + clase específica
             onClick={() => handlePlayerAssign("food")}
             disabled={isOccupiedByVillager || isDamaged}
           >
-            Recolectar 🍎
+            Recolectar <GiFruitTree  className={styles.foodIcon} />
           </button>
         )}
         {tree.taskType !== "wood" && (
-          <button
+          <button className={`${styles.actionButton} ${styles.woodButton}`} // Clase base + clase específica
             onClick={() => handlePlayerAssign("wood")}
             disabled={isOccupiedByVillager}
           >
-            Talar 🪓
+            Talar <GiWoodAxe className={styles.woodIcon} />
           </button>
         )}
       </div>

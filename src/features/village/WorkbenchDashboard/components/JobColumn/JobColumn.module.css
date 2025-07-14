@@ -5,6 +5,9 @@
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   transition: background-color 0.2s ease;
+  padding: 16px;
+  background-color: #2c2c2e; 
+  border-radius: 12px;
 }
 .column.over {
   background-color: rgba(0, 255, 0, 0.1);
@@ -13,11 +16,22 @@
   opacity: 0.6;
 }
 .title {
-  text-align: center;
-  margin-top: 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #555;
+  display: flex; /* <-- CLAVE para alinear */
+  align-items: center;
+  justify-content: center; /* Centra horizontalmente el contenido */
+  gap: 8px; /* Espacio entre icono y texto */
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #444;
+  color: #e0e0e0;
 }
+
+.title svg {
+  width: 22px;
+  height: 22px;
+  color: currentColor; /* Un color neutro para los iconos del título */
+}
+
 .content {
   min-height: 150px;
   display: flex;

@@ -24,6 +24,9 @@
 .dayIcon {
   margin-right: 8px;
   font-size: 1.2rem;
+  width: 20px;
+  height: 20px;
+  color: #ffd700; /* Un color dorado para el icono del sol */
 }
 
 .progressBarContainer {

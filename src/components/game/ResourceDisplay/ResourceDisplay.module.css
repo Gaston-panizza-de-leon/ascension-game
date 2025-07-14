@@ -25,9 +25,10 @@
 }
 
 .icon {
-  font-size: 1.5rem;
+  width: 30px;   /* Un tamaño consistente */
+  height: 30px;
   margin-right: 12px;
-  line-height: 1;
+  flex-shrink: 0; /* Evita que el icono se encoja si el nombre es largo */
 }
 
 .name {

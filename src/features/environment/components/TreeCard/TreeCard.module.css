@@ -22,22 +22,49 @@
 
 .unassignButton {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 24px;
-  height: 24px;
-  color: white;
-  border: 1px solid #777;
+  top: 8px;      /* Un poco más de espacio desde el borde */
+  right: 8px;
+  width: 28px;   /* Un tamaño ligeramente más sustancial */
+  height: 28px;
+  
+  /* Color y Fondo */
+  background-color: #616161; /* Un gris metálico oscuro */
+  color: #e0e0e0;            /* El icono será de un color claro */
+  
+  /* Borde y Sombra para efecto 3D */
+  border: 1px solid #424242; /* Borde oscuro para definir */
   border-radius: 50%;
-  cursor: pointer;
-  z-index: 3;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5), 0 1px 1px rgba(255,255,255,0.1);
+  
+  /* Contenido (el icono) */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  
+  cursor: pointer;
+  z-index: 3;
+  transition: all 0.2s ease-out;
 }
+
+/* Efecto Hover: se ilumina sutilmente */
 .unassignButton:hover {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: #d32f2f; /* Se vuelve rojo al pasar el ratón, indicando peligro */
+  border-color: #b71c1c;
+  color: white;
+  transform: scale(1.1); /* Crece un poco para dar feedback */
+}
+
+/* Efecto Active: se "hunde" en la tarjeta */
+.unassignButton:active {
+  transform: scale(1);
+  background-color: #b71c1c;
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.6);
+}
+
+/* El icono dentro del botón */
+.unassignButton svg {
+  width: 14px;
+  height: 14px;
 }
 
 .workerIcon {
@@ -109,27 +136,77 @@
 
 .actions {
   display: flex;
-  justify-content: center; /* Centramos el botón que quede */
-  gap: 5px;
-  padding: 0 15px 15px 15px;
-  height: 40px; /* Altura fija para el contenedor de acciones */
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  margin-top: auto;
+  border-top: 1px solid #444;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-.actions button {
-  background-color: #555;
-  color: white;
-  border: 1px solid #666;
-  padding: 8px 16px;
-  border-radius: 6px;
+/* --- El estilo base y robusto para TODOS los botones de acción --- */
+.actionButton {
+  /* Usamos Flexbox para control total del contenido interno */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Espacio entre el icono y el texto */
+
+  color: #f5f5f5; /* Texto unificado, blanco roto */
+  border: none;
+  /* La sombra que da profundidad y el borde interior sutil */
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4), 0 2px 3px rgba(0, 0, 0, 0.3);
+
+  padding: 9px 12px;
+  border-radius: 7px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.2s ease;
+  font-size: 0.95rem;
+  transition: all 0.15s ease-out; /* Transición rápida y satisfactoria */
 }
-.actions button:hover:not(:disabled) {
-  background-color: #6a6a6a;
+
+/* --- Efectos de Interacción (comunes a ambos) --- */
+.actionButton:not(:disabled):hover {
+  transform: translateY(-2px); /* Se levanta un poco más */
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
 }
-.actions button:disabled {
-  background-color: #333;
-  color: #777;
+
+.actionButton:not(:disabled):active {
+  transform: translateY(0px); /* Vuelve a su sitio al pulsar */
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Estilos específicos por TIPO de botón --- */
+
+/* Botón de COMIDA: un verde bosque profundo */
+.foodButton {
+  background-color: #2e7d32; /* Verde bosque */
+}
+.foodButton:not(:disabled):hover {
+  background-color: #388e3c;
+}
+
+/* Botón de MADERA: el marrón temático que ya conoces */
+.woodButton {
+  background-color: #6d4c41; /* Marrón madera */
+}
+.woodButton:not(:disabled):hover {
+  background-color: #795548;
+}
+
+
+/* --- Estado Deshabilitado (común) --- */
+.actionButton:disabled {
+  background-color: #424242;
+  color: #757575;
   cursor: not-allowed;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4);
+}
+
+/* --- Iconos dentro de los botones --- */
+.actionButton svg {
+  width: 18px;
+  height: 18px;
+  /* Los iconos heredan el color del texto del botón */
+  color: currentColor; 
 }

@@ -1,5 +1,6 @@
 import { useGameStore } from '../../../store/gameStore';
 import styles from './TimeDisplay.module.css';
+import { GiSun } from "react-icons/gi";
 
 export const TimeDisplay = () => {
     const currentDay = useGameStore((state) => state.currentDay);
@@ -11,7 +12,7 @@ export const TimeDisplay = () => {
     return (
         <div className={styles.panel}>
             <div className={styles.dayCounter}>
-                <span className={styles.dayIcon}>☀️</span>
+                <GiSun className={styles.dayIcon} />
                 Día {currentDay}
             </div>
             <div className={styles.progressBarContainer}>

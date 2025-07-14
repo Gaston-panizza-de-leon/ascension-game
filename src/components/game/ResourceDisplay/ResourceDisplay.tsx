@@ -1,6 +1,7 @@
 import { useGameStore } from "../../../store/gameStore";
 import styles from "./ResourceDisplay.module.css";
-
+import { GiWoodBeam, GiMeat , GiStoneBlock } from "react-icons/gi";
+import { IoIosPeople } from "react-icons/io";
 export const ResourceDisplay = () => {
   // Seleccionamos solo los recursos que necesitamos del store.
   // Usar un selector así es más eficiente, ya que el componente solo se
@@ -20,35 +21,35 @@ export const ResourceDisplay = () => {
     <div className={styles.resourcePanel}>
       {wood > 0 && (
         <div className={styles.resourceItem}>
-          <span className={styles.icon}>🪓</span>
+          <GiWoodBeam className={styles.icon} />
           <span className={styles.name}>Madera</span>
           <span className={styles.value}>{Math.floor(wood)}</span>
         </div>
       )}
       {food > 0 && (
         <div className={styles.resourceItem}>
-          <span className={styles.icon}>🍎</span>
+          <GiMeat className={styles.icon} />
           <span className={styles.name}>Comida</span>
           <span className={styles.value}>{Math.floor(food)}</span>
         </div>
       )}
       {stone > 0 && (
       <div className={styles.resourceItem}>
-        <span className={styles.icon}>💎</span>
+        <GiStoneBlock className={styles.icon} />
         <span className={styles.name}>Piedra</span>
         <span className={styles.value}>{Math.floor(stone)}</span>
       </div>
       )}
             {totalVillagers > 0 && (
         <div className={styles.resourceItem}>
-          <span className={styles.icon}>🧑‍🤝‍🧑</span>
+          <IoIosPeople className={styles.icon} />
           <span className={styles.name}>Aldeanos</span>
           <span className={styles.value}>{totalVillagers}</span>
         </div>
       )}
             {totalVillagers > 0 && (
         <div className={styles.resourceItem}>
-          <span className={styles.icon}>🧑‍🤝‍🧑</span>
+          <IoIosPeople className={styles.icon} />
           <span className={styles.name}>Ocupación</span>
           <span className={styles.value}>{`${freeVillagers}/${totalVillagers}`}</span>
         </div>

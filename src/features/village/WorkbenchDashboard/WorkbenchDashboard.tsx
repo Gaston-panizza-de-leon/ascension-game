@@ -4,6 +4,7 @@ import { type VillagerTask } from "../../../store/slices/villagersSlice";
 import { CompactVillagerCard } from "./components/CompactVillagerCard/CompactVillagerCard";
 import { JobColumn } from "./components/JobColumn/JobColumn";
 import styles from "./WorkbenchDashboard.module.css";
+import { GiCompass, GiWoodAxe, GiFruitTree, GiHammerNails} from "react-icons/gi";
 
 const WorkbenchDashboard = () => {
   const villagers = useGameStore((state) => state.villagers);
@@ -93,14 +94,14 @@ const WorkbenchDashboard = () => {
         <div className={styles.separator}></div>
 
         <div className={styles.jobsArea}>
-          <JobColumn id="explore" title="🗺️ Explorar">
+          <JobColumn id="explore" title="Explorar" icon={<GiCompass />}>
             {employedVillagers
               .filter((v) => v.assignedTask?.type === "exploration")
               .map((v) => (
                 <CompactVillagerCard key={v.id} villager={v} />
               ))}
           </JobColumn>
-          <JobColumn id="chop" title="🪓 Talar" isFull={isWoodColumnFull}>
+          <JobColumn id="chop" title="Talar" icon={<GiWoodAxe />} isFull={isWoodColumnFull}>
             {employedVillagers
               .filter((v) => v.assignedTask?.type === "wood")
               .map((v) => (
@@ -109,7 +110,8 @@ const WorkbenchDashboard = () => {
           </JobColumn>
           <JobColumn
             id="gather"
-            title="🍎 Recolectar"
+            title="Recolectar"
+            icon={<GiFruitTree />}
             isFull={isFoodColumnFull}
           >
             {employedVillagers
@@ -120,7 +122,8 @@ const WorkbenchDashboard = () => {
           </JobColumn>
           <JobColumn
             id="construction"
-            title="🏗️ Construir"
+            title="Construir"
+            icon={<GiHammerNails />}
             // La columna está "llena" (deshabilitada) si NO hay una construcción activa
             isFull={!activeConstruction}
           >
