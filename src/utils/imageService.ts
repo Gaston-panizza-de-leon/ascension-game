@@ -1,4 +1,4 @@
-import houseImage from '../assets/buildings/WoodenHouse.png';
+import houseImage from '@assets/buildings/WoodenHouse.png';
 
 // 2. Creamos un "mapa" que conecta el ID del edificio con su imagen importada.
 // Usamos Record<string, string> para decirle a TypeScript que es un diccionario.

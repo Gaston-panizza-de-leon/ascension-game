@@ -5,9 +5,9 @@ import type {
   VillagerTask,
 } from "../../../../store/slices/villagersSlice";
 import styles from "./TreeCard.module.css";
-import treeImage from "../../../../assets/tree.png";
-import villagerMImage from "../../../../assets/villagerMReduced.png";
-import villagerFImage from "../../../../assets/villagerFReduced.png";
+import treeImage from "@assets/tree.png";
+import villagerMImage from "@assets/villagerMReduced.png";
+import villagerFImage from "@assets/villagerFReduced.png";
 
 interface TreeCardProps {
   tree: Tree;
