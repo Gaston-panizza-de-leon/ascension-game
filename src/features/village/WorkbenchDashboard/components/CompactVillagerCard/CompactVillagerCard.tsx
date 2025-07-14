@@ -1,8 +1,8 @@
 import { useDraggable } from "@dnd-kit/core";
 import styles from "./CompactVillagerCard.module.css";
 import type { Villager } from "../../../../../store/slices/villagersSlice";
-import villagerMImage from "@assets/villagerMReduced.png";
-import villagerFImage from "@assets/villagerFReduced.png";
+import villagerMImage from "@assets/villagers/villagerMReduced.png";
+import villagerFImage from "@assets/villagers/villagerFReduced.png";
 
 interface CompactVillagerCardProps {
   villager: Villager;

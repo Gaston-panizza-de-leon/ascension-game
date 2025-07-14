@@ -1,7 +1,7 @@
 import type { Villager } from "../../../../../store/slices/villagersSlice";
 import styles from "./VillagerCard.module.css";
-import villagerMImage from "@assets/villagerM.png";
-import villagerFImage from "@assets/villagerF.png"; // Asegúrate de que estas imágenes existan en tu carpeta de assets
+import villagerMImage from "@assets/villagers/villagerM.png";
+import villagerFImage from "@assets/villagers/villagerF.png"; // Asegúrate de que estas imágenes existan en tu carpeta de assets
 
 interface VillagerCardProps {
   villager: Villager;
