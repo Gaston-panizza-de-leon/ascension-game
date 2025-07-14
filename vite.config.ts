@@ -10,5 +10,8 @@ export default defineConfig({
     alias: {
       '@assets': path.resolve(__dirname, './src/assets') // Define un alias para tu carpeta de assets
     }
+  },
+  build: {
+    outDir: 'dist',
   }
 })
