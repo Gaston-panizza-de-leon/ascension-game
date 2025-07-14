@@ -1,0 +1,36 @@
+name: Deploy to GitHub Pages # Nombre del flujo de trabajo, visible en la pestaña "Actions" de GitHub
+
+on:
+  push:
+    branches:
+      - main # <--- ¡IMPORTANTE! Aquí pones la rama principal de tu proyecto (main o master)
+              # Este workflow se ejecutará cada vez que hagas un 'git push' a esta rama.
+
+jobs:
+  build-and-deploy: # Define un "job" o tarea. Puedes tener varios jobs, pero para esto, uno es suficiente.
+    runs-on: ubuntu-latest # Especifica el entorno donde se ejecutará el job (una máquina virtual Linux)
+
+    steps: # Los pasos son las acciones secuenciales que se ejecutarán en el job.
+    - name: Checkout Code # Paso 1: Descargar tu código del repositorio
+      uses: actions/checkout@v4 # Usa una acción predefinida para clonar tu repo.
+
+    - name: Set up Node.js # Paso 2: Configurar el entorno de Node.js
+      uses: actions/setup-node@v4 # Usa una acción para instalar Node.js.
+      with:
+        node-version: '22.12.0' # <--- Puedes especificar la versión de Node.js que uses (ej. '16', '20').
+
+    - name: Install Dependencies # Paso 3: Instalar los node_modules
+      run: npm install --legacy-peer-deps # Ejecuta el comando para instalar las dependencias.
+                                        # '--legacy-peer-deps' es útil para evitar errores de versiones de pares.
+
+    - name: Build Project # Paso 4: Compilar tu proyecto (generar la carpeta 'dist')
+      run: npm run build # <--- Ejecuta el script 'build' definido en tu package.json (ej. 'vite build')
+
+    - name: Deploy to GitHub Pages # Paso 5: Desplegar la carpeta 'dist' a la rama 'gh-pages'
+      uses: peaceiris/actions-gh-pages@v3 # <--- ¡Esta es la acción mágica para GitHub Pages!
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }} # Token de autenticación, GitHub lo proporciona automáticamente.
+        publish_dir: ./dist # <--- ¡IMPORTANTE! La carpeta que contiene tus archivos compilados.
+                            # Si tu compilador genera 'build', cámbialo a './build'.
+        publish_branch: gh-pages # <--- La rama a la que se subirán los archivos compilados.
+                                # Esta rama se creará automáticamente si no existe.
