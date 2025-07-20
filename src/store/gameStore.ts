@@ -10,7 +10,7 @@ import { type BuildingsSlice, createBuildingsSlice } from "./slices/buildingsSli
 import buildingBlueprints from '../data/buildings.json';
 
 // --- CONSTANTES ---
-const XP_GAIN_PER_UNIT = 5; // La ganancia de XP
+const XP_GAIN_PER_UNIT = 1000; // La ganancia de XP
 const WOOD_CYCLE_DAYS = 0.5;
 const FOOD_CYCLE_DAYS = 1;
 const POPULATION_PER_HOUSE = 4;

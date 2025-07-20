@@ -4,9 +4,10 @@ import { IoHome, IoPeople } from 'react-icons/io5'; // Usamos iconos para la UI
 
 interface HouseCardProps {
   house: HouseInstance;
+  onClick: () => void;
 }
 
-export const HouseCard = ({ house }: HouseCardProps) => {
+export const HouseCard = ({ house, onClick }: HouseCardProps) => {
   const residentCount = house.residentIds.length;
   const capacity = 4; // Capacidad máxima de una casa
 
@@ -15,7 +16,7 @@ export const HouseCard = ({ house }: HouseCardProps) => {
 
   return (
     // En el futuro, un onClick aquí podría abrir un modal con detalles
-    <div className={`${styles.card} ${isFull ? styles.full : ''}`}>
+    <div className={`${styles.card} ${isFull ? styles.full : ''}`} onClick={onClick}>
       <div className={styles.header}>
         <IoHome className={styles.houseIcon} />
         <h3 className={styles.title}>Casa #{house.id}</h3>
