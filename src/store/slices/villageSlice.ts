@@ -5,7 +5,7 @@ import { ADULT_AGE_IN_DAYS, FERTILE_AGE_END_IN_DAYS, type Villager } from './vil
 
 // --- Definimos la forma de nuestros datos ---
 export interface HouseInstance {
-  id: number; 
+  id: number;
   buildingId: 'HOUSE';
   residentIds: number[];
 }
@@ -43,7 +43,7 @@ export const createVillageSlice: StateCreator<GameState, [], [], VillageSlice> =
       nextHouseId: state.nextHouseId + 1,
       housingAssignments: {
         ...state.housingAssignments,
-        [newHouseId]: [], 
+        [newHouseId]: [],
       },
     }));
   },
@@ -64,7 +64,7 @@ export const createVillageSlice: StateCreator<GameState, [], [], VillageSlice> =
     const { villagers, houses, assignVillagersToHouse } = get();
 
     const allResidentIds = new Set(Object.values(get().housingAssignments).flat());
-    const homelessVillagers = villagers.filter(v => 
+    const homelessVillagers = villagers.filter(v =>
       !allResidentIds.has(v.id) && v.age >= ADULT_AGE_IN_DAYS
     );
 
@@ -74,11 +74,11 @@ export const createVillageSlice: StateCreator<GameState, [], [], VillageSlice> =
       let targetHouse = null;
 
       // --- ALGORITMO DE BÚSQUEDA POR PRIORIDADES ---
-      
+
       // Prioridad 1: Encontrar pareja ideal.
       targetHouse = findHouseWithEligiblePartner(homeless, get());
       if (targetHouse) {
-        const newResidents = [...get().housingAssignments[targetHouse.id], homeless.id]; 
+        const newResidents = [...get().housingAssignments[targetHouse.id], homeless.id];
         assignVillagersToHouse(targetHouse.id, newResidents);
         continue; // Aldeano alojado, pasamos al siguiente
       }
@@ -89,10 +89,10 @@ export const createVillageSlice: StateCreator<GameState, [], [], VillageSlice> =
         assignVillagersToHouse(targetHouse.id, [homeless.id]);
         continue;
       }
-      
+
       // Prioridad 3: Casa con 1 aldeano no-pareja.
       targetHouse = findHouseWithSingleOccupant(get());
-       if (targetHouse) {
+      if (targetHouse) {
         const newResidents = [...get().housingAssignments[targetHouse.id], homeless.id];
         assignVillagersToHouse(targetHouse.id, newResidents);
         continue;
@@ -103,7 +103,7 @@ export const createVillageSlice: StateCreator<GameState, [], [], VillageSlice> =
       const housesWithSpace = houses
         .filter(h => get().housingAssignments[h.id].length < 4)
         .sort((a, b) => get().housingAssignments[a.id].length - get().housingAssignments[b.id].length);
-      
+
       if (housesWithSpace.length > 0) {
         targetHouse = housesWithSpace[0]; // La que tenga menos gente
         const newResidents = [...get().housingAssignments[targetHouse.id], homeless.id];
@@ -111,6 +111,16 @@ export const createVillageSlice: StateCreator<GameState, [], [], VillageSlice> =
         continue;
       }
     }
+  },
+  optimizeAndRelocateVillagers: () => {
+    const housedVillagers = get().villagers.filter(v =>
+      v.age >= ADULT_AGE_IN_DAYS && get().houses.some(h => h.residentIds.includes(v.id))
+    );
+    const unhappySeekers = housedVillagers.filter(villager => {
+      const currentHouse = get().houses.find(h => h.residentIds.includes(villager.id));
+      // Necesitamos esta función auxiliar que determine si la situación es mala
+      return isSituationSuboptimal(villager, currentHouse, get());
+    });
   },
 });
 
@@ -140,4 +150,8 @@ function findEmptyHouse(state: GameState) {
 function findHouseWithSingleOccupant(state: GameState) {
   // Busca una casa con un solo ocupante, sin importar sus características (es el fallback de la prioridad 1)
   return state.houses.find(h => state.housingAssignments[h.id].length === 1) || null;
+}
+
+function isSituationSuboptimal(villager: Villager, currentHouse: HouseInstance | undefined, arg2: GameState): unknown {
+  throw new Error('Function not implemented.');
 }
