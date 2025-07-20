@@ -1,6 +1,6 @@
-import type {  StateCreator } from 'zustand';
-import type { GameState } from '../gameStore';
-import buildingBlueprints from '../../data/buildings.json'; // Importamos nuestros planos
+import type { StateCreator } from "zustand";
+import type { GameState } from "../gameStore";
+import buildingBlueprints from "../../data/buildings.json"; // Importamos nuestros planos
 
 // --- Definimos la forma del estado de este slice ---
 
@@ -15,45 +15,47 @@ export interface BuildingsSlice {
   // Un registro de cuántos edificios de cada tipo tenemos. Ej: { "HOUSE": 2 }
   builtBuildings: Record<string, number>;
   activeConstruction: ActiveConstruction | null;
-  
+
   // --- Las acciones que podemos realizar ---
-  
+
   // Inicia la construcción de un nuevo edificio
   startConstruction: (buildingId: string) => boolean; // Devuelve true si tuvo éxito
   // Avanza el progreso de la construcción activa
   advanceConstruction: (progressAmount: number) => void;
 }
 
-
 // --- La implementación del slice ---
 
-export const createBuildingsSlice: StateCreator<GameState, [], [], BuildingsSlice> = (set, get) => ({
+export const createBuildingsSlice: StateCreator<
+  GameState,
+  [],
+  [],
+  BuildingsSlice
+> = (set, get) => ({
   builtBuildings: {},
   activeConstruction: null,
 
   startConstruction: (buildingId: string) => {
     // 1. Comprobar si ya hay una construcción activa
     if (get().activeConstruction) {
-      console.error("Ya hay una construcción en curso.");
       return false;
     }
-    
+
     // 2. Encontrar la plantilla del edificio en nuestro JSON
-    const blueprint = buildingBlueprints.find(b => b.id === buildingId);
+    const blueprint = buildingBlueprints.find((b) => b.id === buildingId);
     if (!blueprint) {
-      console.error(`No se encontró la plantilla para el edificio con id: ${buildingId}`);
       return false;
     }
 
     // 3. Comprobar y deducir el coste de los recursos
-    const {wood, removeWood} = get();
+    const { wood, removeWood } = get();
     const cost = blueprint.cost;
 
-    if (wood < cost.wood) { // Asumimos coste de madera por ahora
-      console.warn("No hay suficiente madera para empezar la construcción.");
+    if (wood < cost.wood) {
+      // Asumimos coste de madera por ahora
       return false;
     }
-    
+
     // Si tenemos recursos, los gastamos
     removeWood(cost.wood);
 
@@ -78,8 +80,6 @@ export const createBuildingsSlice: StateCreator<GameState, [], [], BuildingsSlic
     if (newProgress >= 100) {
       // --- ¡Construcción completada! ---
       const buildingId = currentConstruction.buildingId;
-      
-      console.log(`¡${buildingId} completado!`);
 
       set((state) => ({
         // Añadimos el edificio al contador de construidos
@@ -87,12 +87,15 @@ export const createBuildingsSlice: StateCreator<GameState, [], [], BuildingsSlic
           ...state.builtBuildings,
           [buildingId]: (state.builtBuildings[buildingId] || 0) + 1,
         },
+
         // Limpiamos la construcción activa
         activeConstruction: null,
       }));
-      
-      // Aquí, en el futuro, aplicaríamos los efectos del edificio (ej: aumentar cap. de población)
+      if (buildingId === "HOUSE") {
+        get().addConstructedHouse({ buildingId: "HOUSE" });
+      }
 
+      // Aquí, en el futuro, aplicaríamos los efectos del edificio (ej: aumentar cap. de población)
     } else {
       // Simplemente actualizamos el progreso
       set({

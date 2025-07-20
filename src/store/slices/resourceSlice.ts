@@ -16,7 +16,7 @@ export interface ResourceSlice {
 
 // --- CREACIÓN DEL SLICE ---
 export const createResourceSlice: StateCreator<ResourceSlice> = (set) => ({
-  wood: 0,
+  wood: 40,
   food: 0,
   stone: 0,
 

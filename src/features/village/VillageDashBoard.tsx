@@ -4,11 +4,13 @@ import Tabs, { type TabItem } from '../../components/molecules/Tabs/Tabs';
 import VillagersDashboard from './VillagersDashboard/VillagersDashboard';
 import WorkbenchDashboard from './WorkbenchDashboard/WorkbenchDashboard';
 import BuildingsDashboard from './BuildingsDashboard/BuildingsDashboard';
+import HousingDashboard from './HousingDashboard/HousingDashboard';
 
 const villageTabs: TabItem[] = [
   { id: 'aldeanos', label: 'Aldeanos' },
   { id: 'trabajo', label: 'Banco de Trabajo' },
-  { id: 'edificios', label: 'Panel de Construcción' }
+  { id: 'edificios', label: 'Panel de Construcción' },
+  { id: 'viviendas', label: 'Panel de Viviendas' }
 ];
 
 const VillageDashboard = () => {
@@ -22,6 +24,8 @@ const VillageDashboard = () => {
                 return <WorkbenchDashboard />;
             case 'edificios':
                 return <BuildingsDashboard />;
+            case 'viviendas':
+                return <HousingDashboard />;
             default:
                 return null;
         }

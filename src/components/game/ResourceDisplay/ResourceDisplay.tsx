@@ -1,6 +1,6 @@
 import { useGameStore } from "../../../store/gameStore";
 import styles from "./ResourceDisplay.module.css";
-import { GiWoodBeam, GiMeat , GiStoneBlock } from "react-icons/gi";
+import { GiWoodBeam, GiMeat, GiStoneBlock } from "react-icons/gi";
 import { IoIosPeople } from "react-icons/io";
 export const ResourceDisplay = () => {
   // Seleccionamos solo los recursos que necesitamos del store.
@@ -10,9 +10,15 @@ export const ResourceDisplay = () => {
   const food = useGameStore((state) => state.food);
   const stone = useGameStore((state) => state.stone);
   const totalVillagers = useGameStore((state) => state.villagers.length);
-  const freeVillagers = useGameStore((state) => state.villagers.filter((v) => v.assignedTask === null).length);
+  const freeVillagers = useGameStore(
+    (state) => state.villagers.filter((v) => v.assignedTask === null).length
+  );
+  const populationCapacity = useGameStore((state) =>
+    state.getPopulationCapacity()
+  );
 
-  const hasResourcesToShow = wood > 0 || food > 0 || stone > 0 || totalVillagers > 0;
+  const hasResourcesToShow =
+    wood > 0 || food > 0 || stone > 0 || totalVillagers > 0;
 
   if (!hasResourcesToShow) {
     return null;
@@ -20,7 +26,7 @@ export const ResourceDisplay = () => {
   return (
     <div className={styles.resourcePanel}>
       {wood > 0 && (
-        <div className={styles.resourceItem}>
+        <div className={`${styles.resourceItem} ${styles.woodIcon}`}>
           <GiWoodBeam className={styles.icon} />
           <span className={styles.name}>Madera</span>
           <span className={styles.value}>{Math.floor(wood)}</span>
@@ -28,30 +34,41 @@ export const ResourceDisplay = () => {
       )}
       {food > 0 && (
         <div className={styles.resourceItem}>
-          <GiMeat className={styles.icon} />
+          <GiMeat className={`${styles.icon} ${styles.foodIcon}`} />
           <span className={styles.name}>Comida</span>
           <span className={styles.value}>{Math.floor(food)}</span>
         </div>
       )}
       {stone > 0 && (
-      <div className={styles.resourceItem}>
-        <GiStoneBlock className={styles.icon} />
-        <span className={styles.name}>Piedra</span>
-        <span className={styles.value}>{Math.floor(stone)}</span>
-      </div>
-      )}
-            {totalVillagers > 0 && (
         <div className={styles.resourceItem}>
-          <IoIosPeople className={styles.icon} />
+          <GiStoneBlock className={`${styles.icon} ${styles.stoneIcon}`} />
+          <span className={styles.name}>Piedra</span>
+          <span className={styles.value}>{Math.floor(stone)}</span>
+        </div>
+      )}
+      {totalVillagers > 0 && populationCapacity === 0 && (
+        <div className={styles.resourceItem}>
+          <IoIosPeople className={`${styles.icon} ${styles.villagerIcon}`} />
           <span className={styles.name}>Aldeanos</span>
           <span className={styles.value}>{totalVillagers}</span>
         </div>
       )}
-            {totalVillagers > 0 && (
+      {totalVillagers > 0 && populationCapacity > 0 && (
         <div className={styles.resourceItem}>
-          <IoIosPeople className={styles.icon} />
+          <IoIosPeople className={`${styles.icon} ${styles.villagerIcon}`} />
+          <span className={styles.name}>Población</span>
+          <span
+            className={styles.value}
+          >{`${totalVillagers}/${populationCapacity}`}</span>
+        </div>
+      )}
+      {totalVillagers > 0 && (
+        <div className={styles.resourceItem}>
+          <IoIosPeople className={`${styles.icon} ${styles.villagerIcon}`} />
           <span className={styles.name}>Ocupación</span>
-          <span className={styles.value}>{`${freeVillagers}/${totalVillagers}`}</span>
+          <span
+            className={styles.value}
+          >{`${freeVillagers}/${totalVillagers}`}</span>
         </div>
       )}
     </div>

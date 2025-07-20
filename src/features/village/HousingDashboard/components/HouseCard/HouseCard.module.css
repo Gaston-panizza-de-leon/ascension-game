@@ -1,0 +1,63 @@
+.card {
+  background-color: #2c2c2e;
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  border-color: #888;
+}
+
+.card.full {
+  background-color: #3e2723; /* Un tono rojizo sutil para indicar que está llena */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 8px;
+}
+
+.houseIcon {
+  width: 20px;
+  height: 20px;
+  color: #aaa;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #e0e0e0;
+}
+
+.content {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.populationInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.populationIcon {
+  width: 24px;
+  height: 24px;
+  color: #64b5f6;
+}
