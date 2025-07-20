@@ -88,7 +88,6 @@ const gameLoop = (timestamp: number) => {
   const deltaTime = timestamp - state.lastTickTimestamp;
   getState().setLastTickTimestamp(timestamp);
   const { advanceTime } = getState();
-  advanceTime(deltaTime);
 
   // --- LÓGICA DE EXPLORACIÓN UNIFICADA ---
   const isPlayerExploring = state.playerTask?.type === 'exploration';
