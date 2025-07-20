@@ -30,6 +30,19 @@
   margin-right: 12px;
   flex-shrink: 0; /* Evita que el icono se encoja si el nombre es largo */
 }
+.woodIcon {
+  color: #8d6e63; /* Color marrón para madera */
+}
+
+.foodIcon {
+  color: #ff7043; /* Color naranja para comida */
+}
+.stoneIcon {
+  color: #90a4ae; /* Color gris azulado para piedra */
+}
+.villagerIcon {
+  color: #64b5f6; /* Color azul claro para población */
+}
 
 .name {
   font-size: 1rem;

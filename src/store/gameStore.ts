@@ -10,9 +10,10 @@ import { type BuildingsSlice, createBuildingsSlice } from "./slices/buildingsSli
 import buildingBlueprints from '../data/buildings.json';
 
 // --- CONSTANTES ---
-const XP_GAIN_PER_UNIT = 300; // La ganancia de XP
+const XP_GAIN_PER_UNIT = 5; // La ganancia de XP
 const WOOD_CYCLE_DAYS = 0.5;
 const FOOD_CYCLE_DAYS = 1;
+const POPULATION_PER_HOUSE = 4;
 
 // --- TIPO GLOBAL ---
 export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & VillageSlice & VillagersSlice & PlayerSlice & TimeSlice & BuildingsSlice &{
@@ -20,6 +21,7 @@ export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & Vi
     isLoopRunning: boolean;
     setLoopRunning: (isRunning: boolean) => void;
     setLastTickTimestamp: (ts: number) => void;
+    getPopulationCapacity: () => number; // Función para obtener la capacidad de población
   };
 
 // --- CREACIÓN DEL STORE ---
@@ -36,6 +38,7 @@ export const useGameStore = create<GameState>()((...a) => ({
   isLoopRunning: false,
   setLoopRunning: (isRunning) => a[0]({ isLoopRunning: isRunning }),
   setLastTickTimestamp: (ts) => a[0]({ lastTickTimestamp: ts }),
+  getPopulationCapacity: () => getPopulationCapacity(), // Función para obtener la capacidad de población
 }));
 
 function processConstruction(deltaTime: number) {
@@ -70,6 +73,12 @@ function processConstruction(deltaTime: number) {
   advanceConstruction(progressGained);
 }
 
+export const getPopulationCapacity = (): number => {
+const state = useGameStore.getState();
+  const houseCount = state.houses.length || 0;
+  return houseCount * POPULATION_PER_HOUSE;
+};
+
 // --- MOTOR DEL JUEGO UNIFICADO ---
 const gameLoop = (timestamp: number) => {
   const { getState } = useGameStore;
@@ -79,9 +88,6 @@ const gameLoop = (timestamp: number) => {
   const deltaTime = timestamp - state.lastTickTimestamp;
   getState().setLastTickTimestamp(timestamp);
   const { advanceTime } = getState();
-  advanceTime(deltaTime);
-  const  { processVillagerNeeds } = getState();
-  processVillagerNeeds();
 
   // --- LÓGICA DE EXPLORACIÓN UNIFICADA ---
   const isPlayerExploring = state.playerTask?.type === 'exploration';
@@ -113,7 +119,6 @@ const gameLoop = (timestamp: number) => {
     } else if (tree.progress > 0) {
       state.updateTreeProgress(tree.id, 0);
     }
-
   });
 
   // --- LÓGICA DE SUBIDA DE NIVEL ---
@@ -127,7 +132,14 @@ const gameLoop = (timestamp: number) => {
     if (newLevel % 4 === 0) getState().discoverNewTree();
     if (newLevel % 10 === 0) getState().discoverNewVillager();
   }
-  
+  const daysPassed = advanceTime(deltaTime);
+  console.log(`Días transcurridos: ${daysPassed}`);
+  if (daysPassed > 0) {
+    state.processVillagerNeeds();
+    state.processAging();
+    state.processReproduction();
+    state.updateHousingAssignments();
+  }
   processConstruction(deltaTime);
   requestAnimationFrame(gameLoop);
 };

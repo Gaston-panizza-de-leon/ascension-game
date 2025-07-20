@@ -1,28 +1,32 @@
-import type { StateCreator } from 'zustand';
-import type { GameState } from '../gameStore';
+import type { StateCreator } from "zustand";
+import type { GameState } from "../gameStore";
 
 export const DAY_DURATION_MS = 10000; // 10 segundos por día por defecto
+export const DAYS_PER_YEAR = 48; // 48 días por año
 
 export interface TimeSlice {
   currentDay: number;
   timeOfDayProgress: number; // Un valor de 0 a 1 que representa el % del día transcurrido
-  advanceTime: (deltaTime: number) => void;
+  advanceTime: (deltaTime: number) => number;
 }
 
-export const createTimeSlice: StateCreator<GameState, [], [], TimeSlice> = (set, get) => ({
+export const createTimeSlice: StateCreator<GameState, [], [], TimeSlice> = (
+  set,
+  get
+) => ({
   currentDay: 1,
   timeOfDayProgress: 0,
   advanceTime: (deltaTime: number) => {
-    const newProgress = get().timeOfDayProgress + (deltaTime / DAY_DURATION_MS);
+    
+    const newTotalProgress =
+      get().timeOfDayProgress + deltaTime / DAY_DURATION_MS;
 
-    if (newProgress >= 1) {
-      const daysPassed = Math.floor(newProgress);
-      set((state) => ({
-        currentDay: state.currentDay + daysPassed,
-        timeOfDayProgress: newProgress % 1, // Reseteamos el progreso, guardando el sobrante
-      }));
-    } else {
-      set({ timeOfDayProgress: newProgress });
-    }
+    const daysPassed = Math.floor(newTotalProgress);
+
+    set((state) => ({
+      currentDay: state.currentDay + daysPassed,
+      timeOfDayProgress: newTotalProgress % 1,
+    }));
+    return daysPassed;
   },
 });

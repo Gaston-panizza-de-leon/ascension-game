@@ -1,0 +1,29 @@
+.dashboard {
+  padding: 24px;
+}
+
+.title {
+  color: #e0e0e0;
+  margin-top: 0;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 12px;
+}
+
+.houseGrid {
+  display: grid;
+  /* Columnas flexibles: crea tantas como quepan con un mínimo de 280px */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px; /* Espacio entre las tarjetas de las casas */
+}
+
+.emptyState {
+  text-align: center;
+  margin-top: 40px;
+  color: #888;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 1.1rem;
+}
