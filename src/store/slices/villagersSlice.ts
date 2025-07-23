@@ -6,7 +6,7 @@ import { DAYS_PER_YEAR } from "./timeSlice";
 // --- CONSTANTES ---
 export const ADULT_AGE_IN_DAYS = 16 * DAYS_PER_YEAR; // = 768 días de juego
 export const FERTILE_AGE_END_IN_DAYS = 40 * DAYS_PER_YEAR; // = 1920 días de juego
-export const REPRODUCTION_CHANCE_PER_DAY = 0.1; // 10% de probabilidad de reproducción diaria
+export const REPRODUCTION_CHANCE_PER_DAY = 0.05; // 5% de probabilidad de reproducción diaria
 // --- TIPOS (Exportados para que otros slices los usen) ---
 export type TaskType = "exploration" | "wood" | "food" | "construction";
 
@@ -164,79 +164,75 @@ export const createVillagersSlice: StateCreator<
   },
 
   processReproduction: () => {
-    const { houses, villagers, createChildVillager, assignVillagersToHouse } =
+    const { houses, villagers, createChildVillager, addVillagerToHouse } =
       get();
 
     // Iteramos sobre cada casa para ver si es un hogar "fértil"
     for (const house of houses) {
       // --- APLICAMOS LAS REGLAS ---
-
+      const realOwnersCount = house.ownerIds.filter(id => id !== null).length;
       // Regla 1: ¿Hay espacio para un niño? (Capacidad máxima de 4)
-      if (house.residentIds.length >= 4) {
+      if ((house.residentIds.length + realOwnersCount) >= 4) {
         continue; // La casa está llena, pasamos a la siguiente.
       }
 
       // Regla 2: ¿Hay una pareja de adultos solos?
-      if (house.residentIds.length === 2) {
-        const resident1 = villagers.find((v) => v.id === house.residentIds[0]);
-        const resident2 = villagers.find((v) => v.id === house.residentIds[1]);
+      if (house.residentIds.length === 0 && realOwnersCount === 2) {
+        const resident1 = villagers.find((v) => v.id === house.ownerIds[0]);
+        const resident2 = villagers.find((v) => v.id === house.ownerIds[1]);
 
         // Comprobamos que ambos residentes existan y sean una pareja de adultos
         if (
           resident1 &&
           resident2 &&
-          resident1.age >= ADULT_AGE_IN_DAYS &&
-          resident2.age >= ADULT_AGE_IN_DAYS &&
-          resident1.sex !== resident2.sex
+          resident1.age < FERTILE_AGE_END_IN_DAYS &&
+          resident2.age < FERTILE_AGE_END_IN_DAYS
         ) {
-          // ¡Condiciones cumplidas! Tiramos el dado.
           if (Math.random() < REPRODUCTION_CHANCE_PER_DAY) {
             // Creamos el niño
             const child = createChildVillager({
               parentId1: resident1.id,
               parentId2: resident2.id,
             });
-
-            // Añadimos al niño a la casa
-            const newResidentIds = [...house.residentIds, child.id];
-            assignVillagersToHouse(house.id, newResidentIds);
+            addVillagerToHouse(child.id, house.id);
           }
         }
-      } else if (house.residentIds.length === 3) {
+      } else if (house.residentIds.length === 1 && realOwnersCount === 2) {
         // Regla 3: ¿Hay una pareja de adultos con UN hijo suyo?
-        const residents = house.residentIds.map((id) =>
-          villagers.find((v) => v.id === id)
-        ).filter(Boolean) as Villager[];
+        const residents = villagers.filter((v) =>
+          house.residentIds.includes(v.id)
+        );
 
-        const adults = residents.filter((r) => r.age >= ADULT_AGE_IN_DAYS);
+        const owners = house.ownerIds
+          .map((id) => villagers.find((v) => v.id === id))
+          .filter(Boolean) as Villager[];
+
         const children = residents.filter((r) => r.age < ADULT_AGE_IN_DAYS);
 
         // Verificamos que la composición sea correcta: 2 adultos y 1 niño
-        if (adults.length === 2 && children.length === 1) {
-          const [parent1, parent2] = adults;
+        if (children.length === 1) {
+          const [parent1, parent2] = owners;
           const child = children[0];
 
           // Verificamos que el niño sea suyo
           if (
             child.genealogy?.parentId1 === parent1.id &&
-            child.genealogy?.parentId2 === parent2.id
+            child.genealogy?.parentId2 === parent2.id &&
+            parent1.age < FERTILE_AGE_END_IN_DAYS &&
+            parent2.age < FERTILE_AGE_END_IN_DAYS
           ) {
-            // ¡Condiciones cumplidas para el segundo hijo! Tiramos el dado.
             if (Math.random() < REPRODUCTION_CHANCE_PER_DAY) {
-              // Podríamos usar una probabilidad menor si quisiéramos
 
               const newChild = createChildVillager({
                 parentId1: parent1.id,
                 parentId2: parent2.id,
               });
-              const newResidentIds = [...house.residentIds, newChild.id];
-              assignVillagersToHouse(house.id, newResidentIds);
+
+              addVillagerToHouse(newChild.id, house.id);
             }
           }
         }
       }
     }
   },
-  
 });
-

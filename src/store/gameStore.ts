@@ -133,12 +133,11 @@ const gameLoop = (timestamp: number) => {
     if (newLevel % 10 === 0) getState().discoverNewVillager();
   }
   const daysPassed = advanceTime(deltaTime);
-  console.log(`Días transcurridos: ${daysPassed}`);
   if (daysPassed > 0) {
     state.processVillagerNeeds();
     state.processAging();
     state.processReproduction();
-    state.updateHousingAssignments();
+    state.updateHousingAndRelocation();
   }
   processConstruction(deltaTime);
   requestAnimationFrame(gameLoop);

@@ -9,10 +9,12 @@ interface HouseCardProps {
 
 export const HouseCard = ({ house, onClick }: HouseCardProps) => {
   const residentCount = house.residentIds.length;
+  const realOwnerCount = house.ownerIds.filter(id => id !== null).length;
+  const livingResidents = residentCount + realOwnerCount;
   const capacity = 4; // Capacidad máxima de una casa
 
   // Lógica para determinar si la casa está llena
-  const isFull = residentCount >= capacity;
+  const isFull = livingResidents >= capacity;
 
   return (
     // En el futuro, un onClick aquí podría abrir un modal con detalles
@@ -24,7 +26,7 @@ export const HouseCard = ({ house, onClick }: HouseCardProps) => {
       <div className={styles.content}>
         <div className={styles.populationInfo}>
           <IoPeople className={styles.populationIcon} />
-          <span>{residentCount} / {capacity}</span>
+          <span>{livingResidents} / {capacity}</span>
         </div>
         {/* Aquí en el futuro podríamos mostrar pequeños avatares de los residentes */}
       </div>
