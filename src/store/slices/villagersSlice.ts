@@ -7,6 +7,7 @@ import { DAYS_PER_YEAR } from "./timeSlice";
 export const ADULT_AGE_IN_DAYS = 16 * DAYS_PER_YEAR; // = 768 días de juego
 export const FERTILE_AGE_END_IN_DAYS = 40 * DAYS_PER_YEAR; // = 1920 días de juego
 export const REPRODUCTION_CHANCE_PER_DAY = 0.05; // 5% de probabilidad de reproducción diaria
+export const MORTALITY_START_AGE_DAYS = 50 * DAYS_PER_YEAR; // 50 años * 48 días/año
 // --- TIPOS (Exportados para que otros slices los usen) ---
 export type TaskType = "exploration" | "wood" | "food" | "construction";
 
@@ -134,12 +135,48 @@ export const createVillagersSlice: StateCreator<
   },
 
   processAging: () => {
-    set((state) => ({
-      villagers: state.villagers.map((villager) => ({
-        ...villager,
-        age: villager.age + 1,
-      })),
-    }));
+    set((state) => {
+
+      const nextVillagers: Villager[] = [];
+      // --- Constantes de tu fórmula ---
+      const C1 = 0.00031763;
+      const C2 = 0.00000443;
+      const C3 = 0.00021411;
+      // --------------------------------
+
+      for (const villager of state.villagers) {
+        // 1. Todos los aldeanos envejecen un día.
+        const newAge = villager.age + 1;
+        let willSurvive = true;
+
+        // 2. Comprobamos si el aldeano está en el rango de edad mortal.
+        if (newAge >= MORTALITY_START_AGE_DAYS) {
+          // 3. Calculamos 'n': los días que han pasado desde que cumplió 50.
+          const n = newAge - MORTALITY_START_AGE_DAYS;
+
+          // 4. Aplicamos tu fórmula para calcular la probabilidad de muerte de HOY.
+          //    (Añadimos una guarda para evitar la división por cero el primer día)
+          if (n > 0) {
+            const mortalityChanceToday = C1 + C2 * n - C3 / (n * n);
+
+            // 5. Tiramos el dado.
+            if (Math.random() < mortalityChanceToday) {
+              willSurvive = false;
+              // Aquí puedes añadir una notificación al jugador si quieres.
+              // console.log(`${villager.name} ha muerto de vejez a los ${Math.floor(newAge / 48)} años.`);
+            }
+          }
+        }
+
+        // 6. Si el aldeano sobrevive, pasa a la lista del día siguiente.
+        if (willSurvive) {
+          nextVillagers.push({ ...villager, age: newAge });
+        }
+      }
+
+      // 7. Actualizamos el estado con la lista final de aldeanos vivos.
+      return { villagers: nextVillagers };
+    });
   },
 
   createChildVillager: (genealogy) => {
@@ -170,9 +207,9 @@ export const createVillagersSlice: StateCreator<
     // Iteramos sobre cada casa para ver si es un hogar "fértil"
     for (const house of houses) {
       // --- APLICAMOS LAS REGLAS ---
-      const realOwnersCount = house.ownerIds.filter(id => id !== null).length;
+      const realOwnersCount = house.ownerIds.filter((id) => id !== null).length;
       // Regla 1: ¿Hay espacio para un niño? (Capacidad máxima de 4)
-      if ((house.residentIds.length + realOwnersCount) >= 4) {
+      if (house.residentIds.length + realOwnersCount >= 4) {
         continue; // La casa está llena, pasamos a la siguiente.
       }
 
@@ -222,7 +259,6 @@ export const createVillagersSlice: StateCreator<
             parent2.age < FERTILE_AGE_END_IN_DAYS
           ) {
             if (Math.random() < REPRODUCTION_CHANCE_PER_DAY) {
-
               const newChild = createChildVillager({
                 parentId1: parent1.id,
                 parentId2: parent2.id,
