@@ -10,6 +10,7 @@ export const REPRODUCTION_CHANCE_PER_DAY = 0.05; // 5% de probabilidad de reprod
 export const MORTALITY_START_AGE_DAYS = 50 * DAYS_PER_YEAR; // 50 años * 48 días/año
 // --- TIPOS (Exportados para que otros slices los usen) ---
 export type TaskType = "exploration" | "wood" | "food" | "construction";
+export type FoodPolicy = "Triage" | "SurvivalOfTheFittest"
 
 export interface VillagerTask {
   type: TaskType;
@@ -30,19 +31,22 @@ export interface Villager {
   origin: "found" | "born";
   discoveryDay?: number; // Solo si es de origen 'found'
   genealogy?: VillagerGenealogy; // Solo si es de origen 'born'
+  hungerState: number; // 4: Saciado, 3: Hambre, 2: Débil, 1: Famélico
+  productivityModifier: number;
 }
 
 // --- INTERFAZ DEL SLICE ---
 export interface VillagersSlice {
   villagers: Villager[];
-  lastFoodConsumptionDay: number;
+  foodPolicy: FoodPolicy;
   discoverNewVillager: () => void;
   assignTaskToVillager: (villagerId: number, task: VillagerTask | null) => void;
   unassignVillagersByTask: (task: VillagerTask) => void;
-  processVillagerNeeds: () => void;
+  processFoodAndHunger: () => void;
   processAging: () => void;
   createChildVillager: (genealogy: VillagerGenealogy) => Villager; // Nueva función para procesar el envejecimiento
   processReproduction: () => void;
+  updateVillagerProductivity: () => void;
 }
 
 // --- CREACIÓN DEL SLICE ---
@@ -53,7 +57,7 @@ export const createVillagersSlice: StateCreator<
   VillagersSlice
 > = (set, get) => ({
   villagers: [],
-  lastFoodConsumptionDay: 0,
+  foodPolicy: "Triage",
 
   discoverNewVillager: () => {
     const setSetx = faker.person.sex() === "male" ? "male" : "female";
@@ -66,6 +70,8 @@ export const createVillagersSlice: StateCreator<
         origin: "found",
         discoveryDay: get().currentDay,
         age: 18 * DAYS_PER_YEAR,
+        hungerState: 4,
+        productivityModifier: 1,
       };
       return { villagers: [...state.villagers, newVillager] };
     });
@@ -106,32 +112,61 @@ export const createVillagersSlice: StateCreator<
     }));
   },
 
-  processVillagerNeeds: () => {
-    const { currentDay, villagers, consumeFood } = get();
-    let lastConsumption = get().lastFoodConsumptionDay;
+  processFoodAndHunger: () => {
+  set((state) => {
+    let availableFood = state.food;
+    const currentPolicy = state.foodPolicy;
 
-    while (currentDay >= lastConsumption + 7) {
-      const consumptionDay = lastConsumption + 7;
+    // 1. ORDENAR: Creamos una copia y la ordenamos según la política.
+    let villagersToFeed = [...state.villagers];
+    if (currentPolicy === 'Triage') {
+      villagersToFeed.sort((a, b) => a.hungerState - b.hungerState);
+    } else if (currentPolicy === 'SurvivalOfTheFittest') {
+      villagersToFeed.sort((a, b) => b.hungerState - a.hungerState);
+    }
+    // Para 'Lottery', no se ordena.
 
-      const eatingVillagers = villagers.filter((v) => {
-        if (v.origin === "born") {
-          return true;
-        }
-        if (v.origin === "found" && typeof v.discoveryDay === "number") {
-          return consumptionDay > v.discoveryDay + 7;
-        }
-        return false;
-      });
-      const foodToConsume = eatingVillagers.length * 5;
+    const survivingVillagers: Villager[] = [];
 
-      if (foodToConsume > 0) {
-        consumeFood(foodToConsume);
+    // 2. PROCESAR: Iteramos sobre la lista ordenada.
+    for (const villager of villagersToFeed) {
+      let foodNeeded = 0;
+      // Definimos el "coste" para mejorar o mantenerse.
+      switch (villager.hungerState) {
+        case 4: foodNeeded = 1; break; // Mantenimiento
+        case 3: foodNeeded = 2; break; // Recuperación
+        case 2: foodNeeded = 3; break; // Recuperación
+        case 1: foodNeeded = 4; break; // Recuperación
+        default: foodNeeded = 1;
       }
 
-      // Actualizamos el día de consumo para la siguiente posible iteración del bucle.
-      lastConsumption += 7;
-      set({ lastFoodConsumptionDay: lastConsumption });
+      let villagerSurvived = true;
+      let updatedVillager = { ...villager };
+
+      if (availableFood >= foodNeeded) {
+        // Puede comer.
+        availableFood -= foodNeeded;
+        updatedVillager.hungerState = Math.min(4, villager.hungerState + 1);
+      } else {
+        // No puede comer, su estado empeora.
+        updatedVillager.hungerState = villager.hungerState - 1;
+        if (updatedVillager.hungerState <= 0) {
+          villagerSurvived = false;
+          // Lógica de notificación de muerte.
+        }
+      }
+
+      if (villagerSurvived) {
+        survivingVillagers.push(updatedVillager);
+      }
     }
+
+    // 3. APLICAR CAMBIOS: Devolvemos el nuevo estado actualizado.
+    return {
+      food: availableFood,
+      villagers: survivingVillagers,
+    };
+  });
   },
 
   processAging: () => {
@@ -190,6 +225,8 @@ export const createVillagersSlice: StateCreator<
       origin: "born", // Su origen es por nacimiento
       age: 0, // Nace con 0 días de edad
       genealogy: genealogy, // Guardamos quiénes son sus padres
+      hungerState: 4, // Nace saciado
+      productivityModifier: 1, // Nace con un modificador de productividad base
     };
 
     set((state) => ({
@@ -270,5 +307,29 @@ export const createVillagersSlice: StateCreator<
         }
       }
     }
+  },
+  updateVillagerProductivity: () => {
+    set((state) => ({
+      villagers: state.villagers.map((villager) => {
+        let newModifier = 1.0; // Por defecto, productividad al 100%
+
+        switch (villager.hungerState) {
+          case 4: // Saciado
+          case 3: // Con Hambre
+            newModifier = 1.0;
+            break;
+          case 2: // Débil
+            newModifier = 0.5; // Productividad al 50%
+            break;
+          case 1: // Famélico
+            newModifier = 0.0; // Productividad al 0%
+            break;
+          default:
+            newModifier = 1.0;
+        }
+
+        return { ...villager, productivityModifier: newModifier };
+      }),
+    }));
   },
 });

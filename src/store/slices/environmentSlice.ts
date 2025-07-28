@@ -73,7 +73,7 @@ export const createEnvironmentSlice: StateCreator<
     if (!workerTask) return;
 
     if (workerTask.type === 'wood') get().addWood(1);
-    else if (workerTask.type === 'food') get().addFood(1);
+    else if (workerTask.type === 'food') get().addFood(2);
 
     const willBeDestroyed = workerTask.type === 'wood' && tree.durability === 1;
 

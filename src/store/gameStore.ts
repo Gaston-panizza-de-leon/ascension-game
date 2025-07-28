@@ -45,17 +45,20 @@ function processConstruction(deltaTime: number) {
   const { activeConstruction, villagers, advanceConstruction } = useGameStore.getState();
 
   // Si no hay nada que construir, no hacemos nada.
-  if (!activeConstruction) {
-    return;
-  }
+  if (!activeConstruction) return;
 
   // Contamos cuántos aldeanos están asignados a la construcción.
-  const constructionWorkers = villagers.filter(v => v.assignedTask?.type === 'construction').length;
+  const constructionWorkers = villagers.filter(v => v.assignedTask?.type === 'construction');
 
   // Si no hay trabajadores, el progreso no avanza.
-  if (constructionWorkers === 0) {
-    return;
-  }
+  if (constructionWorkers.length === 0) return;
+  
+  // Calculamos el poder de construcción total.
+  const totalBuildingPower = constructionWorkers.reduce((sum, worker) => {
+    return sum + worker.productivityModifier;
+  }, 0);
+
+  if (totalBuildingPower === 0) return; // Si no hay productividad, no avanzamos
 
   // Buscamos la plantilla del edificio para obtener su tiempo de construcción base.
   const blueprint = buildingBlueprints.find(b => b.id === activeConstruction.buildingId);
@@ -67,7 +70,7 @@ function processConstruction(deltaTime: number) {
   const fractionOfDayPassed = deltaTime / DAY_DURATION_MS;
 
   // El progreso ganado es proporcional al número de trabajadores.
-  const progressGained = fractionOfDayPassed * progressPerDay * constructionWorkers;
+  const progressGained = fractionOfDayPassed * progressPerDay * totalBuildingPower;
 
   // Llamamos a la acción del slice para que actualice el estado.
   advanceConstruction(progressGained);
@@ -134,10 +137,11 @@ const gameLoop = (timestamp: number) => {
   }
   const daysPassed = advanceTime(deltaTime);
   if (daysPassed > 0) {
-    state.processVillagerNeeds();
+    state.processFoodAndHunger();
     state.processAging();
     state.processReproduction();
     state.updateHousingAndRelocation();
+    state.updateVillagerProductivity();
   }
   processConstruction(deltaTime);
   requestAnimationFrame(gameLoop);
