@@ -16,13 +16,13 @@ const FOOD_CYCLE_DAYS = 1;
 const POPULATION_PER_HOUSE = 4;
 
 // --- TIPO GLOBAL ---
-export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & VillageSlice & VillagersSlice & PlayerSlice & TimeSlice & BuildingsSlice &{
-    lastTickTimestamp: number;
-    isLoopRunning: boolean;
-    setLoopRunning: (isRunning: boolean) => void;
-    setLastTickTimestamp: (ts: number) => void;
-    getPopulationCapacity: () => number; // Función para obtener la capacidad de población
-  };
+export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & VillageSlice & VillagersSlice & PlayerSlice & TimeSlice & BuildingsSlice & {
+  lastTickTimestamp: number;
+  isLoopRunning: boolean;
+  setLoopRunning: (isRunning: boolean) => void;
+  setLastTickTimestamp: (ts: number) => void;
+  getPopulationCapacity: () => number;
+};
 
 // --- CREACIÓN DEL STORE ---
 export const useGameStore = create<GameState>()((...a) => ({
@@ -38,7 +38,7 @@ export const useGameStore = create<GameState>()((...a) => ({
   isLoopRunning: false,
   setLoopRunning: (isRunning) => a[0]({ isLoopRunning: isRunning }),
   setLastTickTimestamp: (ts) => a[0]({ lastTickTimestamp: ts }),
-  getPopulationCapacity: () => getPopulationCapacity(), // Función para obtener la capacidad de población
+  getPopulationCapacity: () => getPopulationCapacity(),
 }));
 
 function processConstruction(deltaTime: number) {
@@ -52,7 +52,7 @@ function processConstruction(deltaTime: number) {
 
   // Si no hay trabajadores, el progreso no avanza.
   if (constructionWorkers.length === 0) return;
-  
+
   // Calculamos el poder de construcción total.
   const totalBuildingPower = constructionWorkers.reduce((sum, worker) => {
     return sum + worker.productivityModifier;
@@ -77,7 +77,7 @@ function processConstruction(deltaTime: number) {
 }
 
 export const getPopulationCapacity = (): number => {
-const state = useGameStore.getState();
+  const state = useGameStore.getState();
   const houseCount = state.houses.length || 0;
   return houseCount * POPULATION_PER_HOUSE;
 };
@@ -109,16 +109,29 @@ const gameLoop = (timestamp: number) => {
 
     if (isPlayerWorkingHere || villagerWorker) {
       const workerTask = isPlayerWorkingHere ? state.playerTask! : villagerWorker!.assignedTask!;
-      const cycleDuration = workerTask.type === 'wood' ? WOOD_CYCLE_DAYS : FOOD_CYCLE_DAYS;
-      const progressPerDays = 100 / cycleDuration;
-      const progressGained = (deltaTime / DAY_DURATION_MS) * progressPerDays;
-      const newProgress = tree.progress + progressGained;
 
-      if (newProgress >= 100) {
-        state.processTreeCycle(tree.id);
-      } else {
-        state.updateTreeProgress(tree.id, newProgress);
+      let gatheringPower = 0;
+      if (isPlayerWorkingHere) {
+        gatheringPower = 1.0; // El jugador siempre tiene el 100% de productividad.
+      } else if (villagerWorker) {
+        gatheringPower = villagerWorker.productivityModifier;
       }
+
+      if (gatheringPower > 0) {
+        const cycleDuration = workerTask.type === 'wood' ? WOOD_CYCLE_DAYS : FOOD_CYCLE_DAYS;
+        const progressPerDays = 100 / cycleDuration;
+
+        // 2. El progreso ganado se multiplica por la potencia de recolección.
+        const progressGained = (deltaTime / DAY_DURATION_MS) * progressPerDays * gatheringPower;
+        const newProgress = tree.progress + progressGained;
+
+        if (newProgress >= 100) {
+          state.processTreeCycle(tree.id);
+        } else {
+          state.updateTreeProgress(tree.id, newProgress);
+        }
+      }
+
     } else if (tree.progress > 0) {
       state.updateTreeProgress(tree.id, 0);
     }
