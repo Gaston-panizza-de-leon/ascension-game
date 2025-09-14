@@ -5,12 +5,14 @@ import VillagersDashboard from './VillagersDashboard/VillagersDashboard';
 import WorkbenchDashboard from './WorkbenchDashboard/WorkbenchDashboard';
 import BuildingsDashboard from './BuildingsDashboard/BuildingsDashboard';
 import HousingDashboard from './HousingDashboard/HousingDashboard';
+import AdministrationDashboard from './AdministrationDashboard/AdministrationDashboard'; 
 
 const villageTabs: TabItem[] = [
   { id: 'aldeanos', label: 'Aldeanos' },
   { id: 'trabajo', label: 'Banco de Trabajo' },
   { id: 'edificios', label: 'Panel de Construcción' },
-  { id: 'viviendas', label: 'Panel de Viviendas' }
+  { id: 'viviendas', label: 'Panel de Viviendas' },
+  { id: 'gobernanza', label: 'Gobernanza' } // Nueva pestaña para administración
 ];
 
 const VillageDashboard = () => {
@@ -26,6 +28,8 @@ const VillageDashboard = () => {
                 return <BuildingsDashboard />;
             case 'viviendas':
                 return <HousingDashboard />;
+            case 'gobernanza':
+                return <AdministrationDashboard />;
             default:
                 return null;
         }

@@ -94,8 +94,17 @@ const gameLoop = (timestamp: number) => {
 
   // --- LÓGICA DE EXPLORACIÓN UNIFICADA ---
   const isPlayerExploring = state.playerTask?.type === 'exploration';
-  const explorationVillagersCount = state.villagers.filter(v => v.assignedTask?.type === 'exploration').length;
-  const totalExplorationEffort = (isPlayerExploring ? 1 : 0) + explorationVillagersCount;
+
+  // 1. Obtenemos la lista de aldeanos que están explorando.
+  const explorationVillagers = state.villagers.filter(v => v.assignedTask?.type === 'exploration');
+
+  // 2. Sumamos su productividad real para obtener el "Poder de Exploración".
+  const totalVillagerExplorationPower = explorationVillagers.reduce((sum, villager) => {
+    return sum + villager.productivityModifier;
+  }, 0);
+
+  // 3. El esfuerzo total ahora incluye la eficiencia de los aldeanos.
+  const totalExplorationEffort = (isPlayerExploring ? 1 : 0) + totalVillagerExplorationPower;
 
   if (totalExplorationEffort > 0) {
     const xpGained = (deltaTime / 1000) * XP_GAIN_PER_UNIT * totalExplorationEffort;

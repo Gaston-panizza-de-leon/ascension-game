@@ -47,6 +47,7 @@ export interface VillagersSlice {
   createChildVillager: (genealogy: VillagerGenealogy) => Villager; // Nueva función para procesar el envejecimiento
   processReproduction: () => void;
   updateVillagerProductivity: () => void;
+  setFoodPolicy: (policy: FoodPolicy) => void;
 }
 
 // --- CREACIÓN DEL SLICE ---
@@ -332,4 +333,9 @@ export const createVillagersSlice: StateCreator<
       }),
     }));
   },
+  setFoodPolicy: (policy) => {
+    set(() => ({
+      foodPolicy: policy
+    }));
+  }
 });

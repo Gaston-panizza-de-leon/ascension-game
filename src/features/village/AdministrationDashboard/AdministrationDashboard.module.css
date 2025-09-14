@@ -1,0 +1,108 @@
+/* En: src/components/PolicyPanel/PolicyPanel.module.css */
+
+/* Inspirado en tu .unassignedSection.
+  Un contenedor oscuro, con borde y un fondo sutil.
+*/
+.policySection {
+  border: 2px solid #555;
+  border-radius: 8px;
+  background-color: rgba(40, 40, 40, 0.3);
+  padding: 16px;
+  margin-top: 20px;
+}
+
+/* Un título con acento de color y un separador, 
+  similar al h4 de tu ejemplo.
+*/
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  color: #FFA500; /* Usamos el mismo color de acento naranja */
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #555;
+}
+
+.optionsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* El cambio principal: cada opción ahora es una caja oscura
+  con un borde que reacciona a la interacción.
+*/
+.policyOption {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background-color: rgba(15, 15, 15, 0.5); /* Fondo más oscuro */
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #444; /* Borde sutil por defecto */
+  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+/* Al pasar el ratón, el borde se ilumina */
+.policyOption:hover {
+  border-color: #888;
+}
+
+.policyOption input[type="radio"] {
+  display: none;
+}
+
+/* El círculo del radio button personalizado, con el estilo del juego.
+*/
+.radioCircle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #888;
+  margin-right: 12px;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.radioCircle::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  margin: 3px;
+  border-radius: 50%;
+  background-color: #FFA500;
+  transform: scale(0);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Cuando la opción está seleccionada, el borde se vuelve naranja
+  y el círculo interior del radio button aparece.
+*/
+.policyOption input[type="radio"]:checked ~ .radioCircle {
+  border-color: #FFA500;
+}
+.policyOption input[type="radio"]:checked ~ .radioCircle::after {
+  transform: scale(1);
+}
+.policyOption input[type="radio"]:checked ~ .optionTextContainer .optionTitle {
+  color: #FFA500; /* El título también cambia a color naranja */
+}
+
+
+.optionTextContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.optionTitle {
+  font-weight: 500;
+  color: #e0e0e0; /* Texto claro estándar */
+  transition: color 0.2s ease-in-out;
+}
+
+.optionDescription {
+  font-size: 0.8rem;
+  color: #aaa; /* Descripción más tenue */
+}
