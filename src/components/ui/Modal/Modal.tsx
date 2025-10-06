@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styles from './Modal.module.css';
-import { IoClose } from 'react-icons/io5'; // Usamos react-icons que ya está en el proyecto
+import { IoClose } from 'react-icons/io5';
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,7 +11,7 @@ interface ModalProps {
   title?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
+export function Modal({ isOpen, onClose, children, title }: ModalProps) {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
@@ -28,6 +28,6 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }
         </div>
       </div>
     </div>,
-    document.body // ¡La magia del portal!
+    document.body
   );
-};
+}

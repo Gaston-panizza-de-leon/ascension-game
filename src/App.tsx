@@ -1,5 +1,6 @@
 // src/App.tsx
 import { useState } from 'react'; // 1. Importa useState
+import { useGlobalHotkeys } from './hooks/useGlobalHotkeys.ts';
 import ExplorationDashboard from './features/exploration/ExplorationDashboard';
 import EnvironmentDashboard from './features/environment/EnvironmentDashboard.tsx';
 import Tabs, { type TabItem } from './components/molecules/Tabs/Tabs.tsx';
@@ -18,7 +19,7 @@ function App() {
 
   const [activeTab, setActiveTab] = useState('exploracion');
 
-
+  useGlobalHotkeys();
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'exploracion':

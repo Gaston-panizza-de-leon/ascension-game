@@ -2,7 +2,7 @@
   {
     "id": "HOUSE",
     "name": "Casa Rudimentaria",
-    "description": "Un refugio básico de madera y barro. Cada casa permite que dos nuevos miembros se unan a tu asentamiento, expandiendo tu potencial.",
+    "description": "Un refugio básico de madera y barro. Cada casa permite que cuatro nuevos miembros se unan a tu asentamiento, expandiendo tu potencial.",
     "isScalable": true,
     "cost": {
       "wood": 30

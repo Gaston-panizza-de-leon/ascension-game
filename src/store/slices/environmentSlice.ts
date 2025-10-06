@@ -78,11 +78,46 @@ export const createEnvironmentSlice: StateCreator<
     const willBeDestroyed = workerTask.type === 'wood' && tree.durability === 1;
 
     if (willBeDestroyed) {
-      get().unassignVillagersByTask({ type: workerTask.type, targetId: treeId });
-      if (get().playerTask?.targetId === treeId) get().setPlayerTask(null);
-      set((state) => ({
-        trees: state.trees.filter((t) => t.id !== treeId),
-      }));
+        // --- NUEVA LÓGICA DE REASIGNACIÓN INTELIGENTE ---
+
+        // 1. Identificamos al aldeano ANTES de hacer cambios
+        const worker = get().villagers.find(v => v.assignedTask?.targetId === treeId);
+        
+        // Si el jugador estaba trabajando, simplemente se libera su tarea
+        if (get().playerTask?.targetId === treeId) {
+            get().setPlayerTask(null);
+        }
+
+        // 2. Si el trabajador era un aldeano, intentamos encontrarle un nuevo árbol
+        if (worker) {
+            // Buscamos todos los árboles que quedan (excluyendo el actual)
+            const otherTrees = get().trees.filter(t => t.id !== treeId && t.taskType === 'wood');
+            
+            // Creamos una lista de todos los árboles ya ocupados por otros
+            const occupiedTargetIds = new Set(
+                get().villagers
+                    .filter(v => v.id !== worker.id) // No nos incluimos en la búsqueda
+                    .map(v => v.assignedTask?.targetId)
+                    .concat(get().playerTask?.targetId) // El jugador también ocupa un sitio
+                    .filter(Boolean) // Limpiamos nulos o undefined
+            );
+
+            // Buscamos el primer árbol que no esté en la lista de ocupados
+            const nextFreeTree = otherTrees.find(t => !occupiedTargetIds.has(t.id));
+            if (nextFreeTree) {
+                // 3a. ¡Éxito! Le asignamos el nuevo árbol
+                const newChopTask = { type: 'wood' as TaskType, targetId: nextFreeTree.id };
+                get().assignTaskToVillager(worker.id, newChopTask);
+            } else {
+                // 3b. No hay más árboles, ahora sí queda libre
+                get().assignTaskToVillager(worker.id, null);
+            }
+        }
+        
+        // 4. Finalmente, eliminamos el árbol destruido del estado del juego
+        set((state) => ({
+            trees: state.trees.filter((t) => t.id !== treeId),
+        }));
     } else {
       set((state) => ({
         trees: state.trees.map((t) => {

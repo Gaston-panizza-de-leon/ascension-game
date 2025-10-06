@@ -28,11 +28,9 @@ export const TreeCard = ({
   onPlayerAssignTask,
   onUnassignVillager,
 }: TreeCardProps) => {
-  // Lógica para que el jugador se asigne (SIN PAUSA)
   const handlePlayerAssign = (taskType: TaskType) => {
-    // Si el jugador ya está en otra tarea de árbol, esto lo cambiará directamente
     onSetTreeTaskType(tree.id, taskType);
-    onPlayerAssignTask({ type: taskType, targetId: tree.id });
+    //onPlayerAssignTask({ type: taskType, targetId: tree.id }); // Asignación automática al jugador desactivada de momento
   };
 
   // Lógica para el botón 'X' de desasignar aldeano
@@ -47,9 +45,8 @@ export const TreeCard = ({
   const progress = isActive ? tree.progress : 0;
 
   const progressStyle = {
-    background: `conic-gradient(#4CAF50 ${progress * 3.6}deg, #3a3a3a ${
-      progress * 3.6
-    }deg)`,
+    background: `conic-gradient(#4CAF50 ${progress * 3.6}deg, #3a3a3a ${progress * 3.6
+      }deg)`,
   };
 
   const isDamaged = tree.durability < tree.maxDurability;
@@ -72,9 +69,8 @@ export const TreeCard = ({
   }
 
   const isClickable = !isActive && !!tree.taskType;
-  const cardClasses = `${styles.card} ${isActive ? styles.active : ""} ${
-    isClickable ? styles.clickable : ""
-  }`;
+  const cardClasses = `${styles.card} ${isActive ? styles.active : ""} ${isClickable ? styles.clickable : ""
+    }`;
 
   return (
     <div className={cardClasses} onClick={handleCardClick} title={isClickable ? `Asignarte a: ${tree.taskType}` : ''}>
@@ -131,7 +127,7 @@ export const TreeCard = ({
             onClick={() => handlePlayerAssign("food")}
             disabled={isOccupiedByVillager || isDamaged}
           >
-            Recolectar <GiFruitTree  className={styles.foodIcon} />
+            Recolectar <GiFruitTree className={styles.foodIcon} />
           </button>
         )}
         {tree.taskType !== "wood" && (
