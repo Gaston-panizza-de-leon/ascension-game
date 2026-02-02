@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useState } from 'react'; // 1. Importa useState
+import { useState } from 'react';
 import { useGlobalHotkeys } from './hooks/useGlobalHotkeys.ts';
 import ExplorationDashboard from './features/exploration/ExplorationDashboard';
 import EnvironmentDashboard from './features/environment/EnvironmentDashboard.tsx';
@@ -7,6 +7,7 @@ import Tabs, { type TabItem } from './components/molecules/Tabs/Tabs.tsx';
 import { ResourceDisplay } from './components/game/ResourceDisplay/ResourceDisplay.tsx';
 import VillageDashboard from './features/village/VillageDashBoard.tsx';
 import { TimeDisplay } from './components/game/TimeDisplay/TimeDisplay.tsx';
+import { IdleVillagersDisplay } from './components/game/IdleVillagersDisplay/IdleVillagersDisplay.tsx';
 import './App.css';
 
 const mainTabs: TabItem[] = [
@@ -50,6 +51,7 @@ function App() {
           {renderActiveTabContent()}
         </div>
       </main>
+       <IdleVillagersDisplay />
     </div>
   );
 }

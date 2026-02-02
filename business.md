@@ -112,8 +112,8 @@ XP_requerida = 5 × (1.1 ^ (nivel - 1))
 #### Estado
 ```typescript
 {
-  wood: number    // Madera (inicial: 100)
-  food: number    // Comida (inicial: 1000)
+  wood: number    // Madera (inicial: 0)
+  food: number    // Comida (inicial: 20)
   stone: number   // Piedra (inicial: 0)
 }
 ```
@@ -127,8 +127,8 @@ XP_requerida = 5 × (1.1 ^ (nivel - 1))
 
 **Comida**:
 - Se obtiene recolectando de árboles
-- Cada ciclo completo de recolección produce: **2 comida**
-- Se consume semanalmente por los aldeanos (5 comida/aldeano cada 7 días)
+- Cada ciclo completo de recolección produce: **3 comida**
+- Se consume a diario por aldeano (1 unidad por aldeano)
 - La comida nunca baja de 0 (protección contra valores negativos)
 
 **Piedra**:

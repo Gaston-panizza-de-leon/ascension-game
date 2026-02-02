@@ -20,6 +20,8 @@ export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & Vi
   lastTickTimestamp: number;
   isLoopRunning: boolean;
   isPaused: boolean;
+  isIdlePanelSuppressed: boolean; 
+  setIdlePanelSuppressed: (isSuppressed: boolean) => void;
   setLoopRunning: (isRunning: boolean) => void;
   setLastTickTimestamp: (ts: number) => void;
   processConstruction: (deltaTime: number) => void;
@@ -42,8 +44,10 @@ export const useGameStore = create<GameState>()((...a) => ({
   lastTickTimestamp: 0,
   isLoopRunning: false,
   isPaused: false,
-  setLoopRunning: (isRunning) => a[0]({ isLoopRunning: isRunning }),
+  isIdlePanelSuppressed: false,
   setLastTickTimestamp: (ts) => a[0]({ lastTickTimestamp: ts }),
+  setLoopRunning: (isRunning) => a[0]({ isLoopRunning: isRunning }),
+  setIdlePanelSuppressed: (isSuppressed) => a[0]({ isIdlePanelSuppressed: isSuppressed }),
   
 
   processConstruction: (deltaTime: number) => {
