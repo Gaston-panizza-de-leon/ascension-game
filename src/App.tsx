@@ -1,5 +1,5 @@
 // src/App.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGlobalHotkeys } from './hooks/useGlobalHotkeys.ts';
 import ExplorationDashboard from './features/exploration/ExplorationDashboard';
 import EnvironmentDashboard from './features/environment/EnvironmentDashboard.tsx';
@@ -8,6 +8,9 @@ import { ResourceDisplay } from './components/game/ResourceDisplay/ResourceDispl
 import VillageDashboard from './features/village/VillageDashBoard.tsx';
 import { TimeDisplay } from './components/game/TimeDisplay/TimeDisplay.tsx';
 import { IdleVillagersDisplay } from './components/game/IdleVillagersDisplay/IdleVillagersDisplay.tsx';
+import ResetProgress from './components/game/ResetProgress/ResetProgress';
+import { saveService } from './utils/saveService';
+import { useGameStore } from './store/gameStore';
 import './App.css';
 
 const mainTabs: TabItem[] = [
@@ -21,6 +24,17 @@ function App() {
   const [activeTab, setActiveTab] = useState('exploracion');
 
   useGlobalHotkeys();
+
+  useEffect(() => {
+    saveService.open()
+      .then(() => saveService.loadGame())
+      .then((save) => {
+        if (save) {
+          useGameStore.getState().hydrateFromSave(save);
+        }
+      })
+      .catch(console.error);
+  }, []);
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'exploracion':
@@ -52,6 +66,7 @@ function App() {
         </div>
       </main>
        <IdleVillagersDisplay />
+       <ResetProgress />
     </div>
   );
 }

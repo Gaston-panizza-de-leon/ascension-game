@@ -1,5 +1,3 @@
-// En: src/components/game/IdleVillagersDisplay/IdleVillagersDisplay.tsx
-
 import { useMemo } from 'react';
 import { useGameStore } from '../../../store/gameStore';
 import styles from './IdleVillagersDisplay.module.css';
@@ -27,7 +25,6 @@ export const IdleVillagersDisplay = () => {
       <ul className={styles.villagerList}>
         {idleVillagers.map((villager) => (
           <li key={villager.id} className={styles.villagerItem}>
-            {/* Aquí podrías poner un retrato pequeño en el futuro */}
             <span>{villager.name}</span>
           </li>
         ))}

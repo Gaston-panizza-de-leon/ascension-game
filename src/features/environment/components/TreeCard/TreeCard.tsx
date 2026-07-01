@@ -52,7 +52,7 @@ export const TreeCard = ({
   const isDamaged = tree.durability < tree.maxDurability;
 
   const handleCardClick = () => {
-    // Solo funciona si el árbol tiene una tarea definida y está TOTALMENTE libre
+    // Solo funciona si el árbol tiene una tarea definida y está libre
     if (isActive || !tree.taskType) {
       return;
     }
@@ -84,7 +84,6 @@ export const TreeCard = ({
         </button>
       )}
 
-      {/* Icono del aldeano trabajando */}
       {isOccupiedByVillager && (
         <img
           src={
@@ -123,7 +122,7 @@ export const TreeCard = ({
       {/* Acciones del jugador: solo se muestra el botón de la tarea CONTRARIA */}
       <div className={styles.actions}>
         {tree.taskType !== "food" && (
-          <button className={`${styles.actionButton} ${styles.foodButton}`} // Clase base + clase específica
+          <button className={`${styles.actionButton} ${styles.foodButton}`}
             onClick={() => handlePlayerAssign("food")}
             disabled={isOccupiedByVillager || isDamaged}
           >
@@ -131,7 +130,7 @@ export const TreeCard = ({
           </button>
         )}
         {tree.taskType !== "wood" && (
-          <button className={`${styles.actionButton} ${styles.woodButton}`} // Clase base + clase específica
+          <button className={`${styles.actionButton} ${styles.woodButton}`}
             onClick={() => handlePlayerAssign("wood")}
             disabled={isOccupiedByVillager}
           >

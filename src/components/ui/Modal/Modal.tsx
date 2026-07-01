@@ -1,4 +1,3 @@
-// src/components/ui/Modal/Modal.tsx
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styles from './Modal.module.css';

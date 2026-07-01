@@ -1,5 +1,3 @@
-// En: src/components/PolicyPanel.tsx
-
 import { useGameStore } from '../../../store/gameStore';
 import styles from './AdministrationDashboard.module.css';
 

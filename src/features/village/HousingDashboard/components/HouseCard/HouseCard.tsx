@@ -11,13 +11,11 @@ export const HouseCard = ({ house, onClick }: HouseCardProps) => {
   const residentCount = house.residentIds.length;
   const realOwnerCount = house.ownerIds.filter(id => id !== null).length;
   const livingResidents = residentCount + realOwnerCount;
-  const capacity = 4; // Capacidad máxima de una casa
+  const capacity = 4;
 
-  // Lógica para determinar si la casa está llena
   const isFull = livingResidents >= capacity;
 
   return (
-    // En el futuro, un onClick aquí podría abrir un modal con detalles
     <div className={`${styles.card} ${isFull ? styles.full : ''}`} onClick={onClick}>
       <div className={styles.header}>
         <IoHome className={styles.houseIcon} />
@@ -28,7 +26,6 @@ export const HouseCard = ({ house, onClick }: HouseCardProps) => {
           <IoPeople className={styles.populationIcon} />
           <span>{livingResidents} / {capacity}</span>
         </div>
-        {/* Aquí en el futuro podríamos mostrar pequeños avatares de los residentes */}
       </div>
     </div>
   );

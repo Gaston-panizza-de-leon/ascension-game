@@ -8,9 +8,10 @@ import { type PlayerSlice, createPlayerSlice } from "./slices/playerSlice";
 import { type TimeSlice, createTimeSlice, DAY_DURATION_MS } from './slices/timeSlice';
 import { type BuildingsSlice, createBuildingsSlice } from "./slices/buildingsSlice";
 import buildingBlueprints from '../data/buildings.json';
+import { saveService, type GameSaveData } from '../utils/saveService';
 
 // --- CONSTANTES ---
-const XP_GAIN_PER_UNIT = 1000; // La ganancia de XP
+const XP_GAIN_PER_UNIT = 10; // La ganancia de XP
 const WOOD_CYCLE_DAYS = 0.5;
 const FOOD_CYCLE_DAYS = 1;
 const POPULATION_PER_HOUSE = 4;
@@ -29,6 +30,7 @@ export type GameState = ExplorationSlice & ResourceSlice & EnvironmentSlice & Vi
   processTreeResources: (deltaTime: number) => void;
   getPopulationCapacity: () => number;
   togglePause: () => void;
+  hydrateFromSave: (data: GameSaveData) => void;
 };
 
 // --- CREACIÓN DEL STORE ---
@@ -168,7 +170,56 @@ export const useGameStore = create<GameState>()((...a) => ({
     // Invertimos el valor de isPaused
     useGameStore.setState({ isPaused: !state.isPaused });
   },
+
+  hydrateFromSave: (data) => {
+    useGameStore.setState({
+      currentDay: data.currentDay,
+      timeOfDayProgress: data.timeOfDayProgress,
+      wood: data.wood,
+      food: data.food,
+      stone: data.stone,
+      explorationLevel: data.explorationLevel,
+      currentXp: data.currentXp,
+      playerTask: data.playerTask,
+      trees: data.trees,
+      villagers: data.villagers,
+      foodPolicy: data.foodPolicy,
+      houses: data.houses,
+      nextHouseId: data.nextHouseId,
+      builtBuildings: data.builtBuildings,
+      activeConstruction: data.activeConstruction,
+      lastTickTimestamp: performance.now(),
+      isPaused: data.isPaused ?? false,
+      isLoopRunning: false,
+    });
+  },
 }));
+
+// --- PERSISTENCIA ---
+function persistSnapshot() {
+  const state = useGameStore.getState();
+  const saveData: GameSaveData = {
+    version: 1,
+    currentDay: state.currentDay,
+    timeOfDayProgress: state.timeOfDayProgress,
+    wood: state.wood,
+    food: state.food,
+    stone: state.stone,
+    explorationLevel: state.explorationLevel,
+    currentXp: state.currentXp,
+    playerTask: state.playerTask,
+    trees: state.trees,
+    villagers: state.villagers,
+    foodPolicy: state.foodPolicy,
+    houses: state.houses,
+    nextHouseId: state.nextHouseId,
+    builtBuildings: state.builtBuildings,
+    activeConstruction: state.activeConstruction,
+    lastTickTimestamp: state.lastTickTimestamp,
+    isPaused: state.isPaused,
+  };
+  saveService.saveGame(saveData).catch(console.error);
+}
 
 // --- MOTOR DEL JUEGO UNIFICADO ---
 const gameLoop = (timestamp: number) => {
@@ -205,6 +256,7 @@ const gameLoop = (timestamp: number) => {
     state.processReproduction();
     state.updateHousingAndRelocation();
     state.updateVillagerProductivity();
+    persistSnapshot();
   }
   state.processConstruction(deltaTime);
   requestAnimationFrame(gameLoop);

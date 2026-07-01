@@ -13,5 +13,5 @@
 .buildingList {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Espacio entre cada tarjeta de edificio */
+  gap: 16px;
 }

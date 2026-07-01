@@ -12,9 +12,8 @@
 
 .houseGrid {
   display: grid;
-  /* Columnas flexibles: crea tantas como quepan con un mínimo de 280px */
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px; /* Espacio entre las tarjetas de las casas */
+  gap: 24px;
 }
 
 .emptyState {

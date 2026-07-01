@@ -1,8 +1,6 @@
-// src/features/environment/EnvironmentDashboard.tsx
 import { useState } from 'react';
-import Tabs, { type TabItem } from '../../components/molecules/Tabs/Tabs'; // Importa el componente de Tabs
-import TreesDashboard from './TreesDashboard/TreesDashboard'; // El nuevo componente
-// En el futuro: import RiverDashboard from './RiverDashboard/RiverDashboard';
+import Tabs, { type TabItem } from '../../components/molecules/Tabs/Tabs';
+import TreesDashboard from './TreesDashboard/TreesDashboard';
 
 const environmentTabs: TabItem[] = [
   { id: 'arboles', label: 'Árboles' },

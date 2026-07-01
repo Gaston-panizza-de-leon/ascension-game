@@ -1,22 +1,17 @@
 .panel {
   position: fixed;
-  /* Lo fijamos en la pantalla */
   top: 16px;
   left: 24px;
   background-color: rgba(30, 30, 30, 0.8);
   backdrop-filter: blur(5px);
-  /* Efecto "glassmorphism" para que se vea bien sobre cualquier fondo */
   border: 1px solid #444;
   border-radius: 8px;
   padding: 8px 16px;
   width: 250px;
   z-index: 1000;
-  /* Nos aseguramos de que esté por encima de otros elementos */
   display: flex;
   align-items: center;
   gap: 12px;
-  /* Espacio entre los elementos */
-  /* ... (resto de tus estilos del panel) ... */
 }
 
 .dayCounter {
@@ -35,8 +30,7 @@
   font-size: 1.2rem;
   width: 20px;
   height: 20px;
-  color: #ffd700;
-  /* Un color dorado para el icono del sol */
+  color: #ffd700; /* Un color dorado para el icono del sol */
 }
 
 .progressBarContainer {
@@ -50,18 +44,16 @@
 
 .progressBar {
   height: 100%;
-  background: linear-gradient(90deg, #ffd700, #ff8c00);
-  /* Un gradiente de amanecer a atardecer */
+  background: linear-gradient(90deg, #ffd700, #ff8c00); /* Un gradiente de amanecer a atardecer */
   border-radius: 3px;
   transition: width 0.1s linear;
-  /* Transición suave para el progreso */
 }
 
 .pauseButton {
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid #555;
     color: #e0e0e0;
-    border-radius: 50%; /* Lo hacemos circular */
+    border-radius: 50%;
     width: 32px;
     height: 32px;
     display: flex;

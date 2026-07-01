@@ -1,8 +1,8 @@
-/* En: src/components/game/IdleVillagersDisplay/IdleVillagersDisplay.module.css */
+
 
 .panel {
-  position: fixed; /* Fijo en la pantalla, no se mueve con el scroll */
-  top: 160px;       /* Un poco por debajo del panel de recursos */
+  position: fixed;
+  top: 160px;      
   left: 15px;
   width: 200px;
   background-color: rgba(15, 15, 15, 0.85);
@@ -10,7 +10,7 @@
   border: 1px solid #444;
   padding: 10px;
   backdrop-filter: blur(5px);
-  z-index: 999; /* Por debajo del panel de recursos principal (z-index: 1000) */
+  z-index: 999; 
   color: #e0e0e0;
 }
 
