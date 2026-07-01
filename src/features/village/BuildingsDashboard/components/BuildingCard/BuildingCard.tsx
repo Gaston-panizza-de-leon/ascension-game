@@ -22,7 +22,7 @@ interface BuildingCardProps {
 
 export const BuildingCard = ({ blueprint }: BuildingCardProps) => {
   // Obtenemos los datos relevantes del store de Zustand
-    // Extraemos los datos del store de Zustand sin usar blueprint en el selector
+  // Extraemos los datos del store sin usar blueprint en el selector
   const builtCount = useGameStore((state) => state.builtBuildings[blueprint.id] || 0);
   const activeConstruction = useGameStore((state) => state.activeConstruction);
   const startConstruction = useGameStore((state) => state.startConstruction);
@@ -67,14 +67,13 @@ export const BuildingCard = ({ blueprint }: BuildingCardProps) => {
               <span className={styles.progressText}>{Math.floor(activeConstruction.progress)}%</span>
             </div>
           ) : (
-            // --- VISTA DE COSTE (NUEVA) ---
+            // --- VISTA DE COSTE ---
             <div className={styles.costContainer}>
               <span className={styles.costLabel}>Coste:</span>
               <div className={styles.costItem}>
                 <GiWoodBeam className={styles.costIcon} />
                 <span>{blueprint.cost.wood}</span>
               </div>
-              {/* Aquí podrías añadir más costes en el futuro */}
             </div>
           )}
         </div>
@@ -85,7 +84,7 @@ export const BuildingCard = ({ blueprint }: BuildingCardProps) => {
             onClick={handleBuildClick}
             disabled={isUnderConstruction || !hasEnoughResources || (builtCount > 0 && !blueprint.isScalable)}
           >
-            Construir {/* <-- Texto simplificado */}
+            Construir
           </button>
         </div>
       </div>

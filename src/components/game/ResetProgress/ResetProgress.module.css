@@ -1,0 +1,79 @@
+.container {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  z-index: 999;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(5px);
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #e0e0e0;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.trigger:hover {
+  background-color: rgba(180, 40, 40, 0.25);
+  border-color: #b52828;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: #e57373;
+}
+
+.confirmBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: #e0e0e0;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.cancelBtn {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #ccc;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.cancelBtn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.confirmBtn {
+  background-color: rgba(180, 40, 40, 0.7);
+  border: 1px solid #b52828;
+  border-radius: 6px;
+  color: #fff;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.confirmBtn:hover {
+  background-color: rgba(200, 40, 40, 0.85);
+}

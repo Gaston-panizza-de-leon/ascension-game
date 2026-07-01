@@ -10,7 +10,6 @@ export const BuildingsDashboard = () => {
         {buildingBlueprints.map((blueprint) => (
           <BuildingCard key={blueprint.id} blueprint={blueprint} />
         ))}
-        {/* Aquí se podrían añadir en el futuro los planos de edificios investigados */}
       </div>
     </div>
   );

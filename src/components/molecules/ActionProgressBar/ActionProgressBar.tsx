@@ -1,4 +1,3 @@
-// src/components/molecules/ActionProgressBar/ActionProgressBar.tsx
 import styles from './ActionProgressBar.module.css';
 
 interface ActionProgressBarProps {

@@ -28,11 +28,9 @@ export const TreeCard = ({
   onPlayerAssignTask,
   onUnassignVillager,
 }: TreeCardProps) => {
-  // Lógica para que el jugador se asigne (SIN PAUSA)
   const handlePlayerAssign = (taskType: TaskType) => {
-    // Si el jugador ya está en otra tarea de árbol, esto lo cambiará directamente
     onSetTreeTaskType(tree.id, taskType);
-    onPlayerAssignTask({ type: taskType, targetId: tree.id });
+    //onPlayerAssignTask({ type: taskType, targetId: tree.id }); // Asignación automática al jugador desactivada de momento
   };
 
   // Lógica para el botón 'X' de desasignar aldeano
@@ -47,15 +45,14 @@ export const TreeCard = ({
   const progress = isActive ? tree.progress : 0;
 
   const progressStyle = {
-    background: `conic-gradient(#4CAF50 ${progress * 3.6}deg, #3a3a3a ${
-      progress * 3.6
-    }deg)`,
+    background: `conic-gradient(#4CAF50 ${progress * 3.6}deg, #3a3a3a ${progress * 3.6
+      }deg)`,
   };
 
   const isDamaged = tree.durability < tree.maxDurability;
 
   const handleCardClick = () => {
-    // Solo funciona si el árbol tiene una tarea definida y está TOTALMENTE libre
+    // Solo funciona si el árbol tiene una tarea definida y está libre
     if (isActive || !tree.taskType) {
       return;
     }
@@ -72,9 +69,8 @@ export const TreeCard = ({
   }
 
   const isClickable = !isActive && !!tree.taskType;
-  const cardClasses = `${styles.card} ${isActive ? styles.active : ""} ${
-    isClickable ? styles.clickable : ""
-  }`;
+  const cardClasses = `${styles.card} ${isActive ? styles.active : ""} ${isClickable ? styles.clickable : ""
+    }`;
 
   return (
     <div className={cardClasses} onClick={handleCardClick} title={isClickable ? `Asignarte a: ${tree.taskType}` : ''}>
@@ -88,7 +84,6 @@ export const TreeCard = ({
         </button>
       )}
 
-      {/* Icono del aldeano trabajando */}
       {isOccupiedByVillager && (
         <img
           src={
@@ -127,15 +122,15 @@ export const TreeCard = ({
       {/* Acciones del jugador: solo se muestra el botón de la tarea CONTRARIA */}
       <div className={styles.actions}>
         {tree.taskType !== "food" && (
-          <button className={`${styles.actionButton} ${styles.foodButton}`} // Clase base + clase específica
+          <button className={`${styles.actionButton} ${styles.foodButton}`}
             onClick={() => handlePlayerAssign("food")}
             disabled={isOccupiedByVillager || isDamaged}
           >
-            Recolectar <GiFruitTree  className={styles.foodIcon} />
+            Recolectar <GiFruitTree className={styles.foodIcon} />
           </button>
         )}
         {tree.taskType !== "wood" && (
-          <button className={`${styles.actionButton} ${styles.woodButton}`} // Clase base + clase específica
+          <button className={`${styles.actionButton} ${styles.woodButton}`}
             onClick={() => handlePlayerAssign("wood")}
             disabled={isOccupiedByVillager}
           >

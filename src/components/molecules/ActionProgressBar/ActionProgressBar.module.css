@@ -1,13 +1,13 @@
-/* src/components/molecules/ActionProgressBar/ActionProgressBar.module.css */
+
 .actionProgressBar {
-  width: 300px; /* O el ancho que prefieras */
+  width: 300px;
   height: 50px;
   background-color: #555;
   border: 2px solid #333;
   border-radius: 8px;
   position: relative;
   cursor: pointer;
-  overflow: hidden; /* Para que el relleno no se salga */
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,6 +40,6 @@
 }
 
 .label {
-  position: relative; /* Para que esté por encima del relleno */
+  position: relative;
   z-index: 1;
 }

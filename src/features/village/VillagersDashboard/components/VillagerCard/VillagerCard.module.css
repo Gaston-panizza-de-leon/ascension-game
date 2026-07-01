@@ -16,8 +16,10 @@
 
 .imageContainer {
   width: 100%;
-  height: 180px; /* Altura fija para la imagen */
+  height: 180px;
   background-color: #3a3a3a;
+  display: flex;
+  justify-content: center;
 }
 
 .villagerImage {
@@ -42,4 +44,34 @@
   color: #b0b0b0;
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+.hungerIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px; /* Un pequeño espacio entre los iconos */
+  margin-top: 8px; /* Un poco de espacio superior para separarlo del contenido */
+  padding: 4px;
+}
+.baseIcon {
+  width: 20px;
+  height: 20px;
+}
+/* Clases de color para cada estado */
+.hungerSaciado {
+  color: #22c55e; /* Verde brillante */
+}
+.hungerHambre {
+  color: #facc15; /* Amarillo */
+}
+.hungerDebil {
+  color: #f97316; /* Naranja */
+}
+.hungerFamelico {
+  color: #ef4444; /* Rojo */
+}
+.hungerEmpty {
+  color: #242930; /* Un gris oscuro */
+  opacity: 0.3;
 }
